@@ -15,10 +15,17 @@ router.get("/", async (req, res)=>{
 });
 
 getUser= async(email_user, password_user=null)=>{
-    let resUser = await User.findOne({
-        where: {"email_user": email_user}
-    })
-
+    let resUser;
+    if(password_user){
+         resUser = await User.findOne({
+            where: {"email_user": email_user, "password_user": password_user}
+        })
+    }else{
+         resUser = await User.findOne({
+            where: {"email_user": email_user}
+        })
+    }
+   
     if(!resUser){
         return false
     }else{
@@ -70,5 +77,47 @@ router.post('/login', async(req, res)=>{
     }
 })
 
+router.post("/getPremium", async(req, res)=>{
+    let token = req.header("x-auth-token");
+    let jumlah_bulan = parseInt(req.body.jumlah_bulan);
+
+    if(!token) res.status(404).send("Token not found!");
+    else{
+        try{
+            let user = jwt.verify(token, secretkey);
+            let UserData = await User.findOne({
+                where: {"email_user": user.email_user}
+            })
+
+            if(!jumlah_bulan) res.status(400).send("Data harus lengkap");
+            else{
+                 // dicek apakah sudah pernah get premium blm atau sudah exp
+                if(!UserData.exp_premium ||  new Date(UserData.exp_premium)< new Date()){
+                    let date = new Date();
+                    console.log(date);
+                    let new_exp_premium = date.setMonth(date.getMonth()+jumlah_bulan);
+                    UserData.exp_premium= new_exp_premium;
+                    
+                    try{
+                        UserData.save();
+                        res.status(200).send("Berhasil Get Premium");
+                    }catch(error){
+                        res.status(400).send(error);
+                    }
+                }else if(new Date(UserData.exp_premium)> new Date()){
+                    let exp_premium = new Date(UserData.exp_premium);
+                    res.status(400).send({
+                        message: "Anda sudah berlangganan premium hingga " +  exp_premium.getDate().toString().padStart(2,0) + "/"+ (exp_premium.getMonth()+1).toString().padStart(2,0) + "/"+ exp_premium.getFullYear().toString()
+                    })
+                }
+            }
+           
+            
+        }catch(error){
+            res.status(400).send(error);
+        }
+        
+    }
+})
 
 module.exports=router;
