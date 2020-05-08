@@ -49,7 +49,9 @@ router.post("/register", async (req, res)=>{
                     password_user: password_user,
                     nama_user: nama_user
                 })
-                newUser.save();
+                let x = await newUser.save();
+                console.log(x);
+                
                 res.status(200).send("Insert user baru berhasil");
             }catch(error){
                 res.status(400).send(error);
@@ -66,10 +68,22 @@ router.post('/login', async(req, res)=>{
     else{
         let found = await getUser(email_user, password_user);
         if(found) {
+            //tambah kapan token tsb expired
             let token = jwt.sign({
                 email_user: email_user
-            }, secretkey);
+            }, secretkey, {
+                expiresIn: '1d'
+            });
             res.status(200).send(token);
+
+            //contoh verification jwt
+            //try catch utk ndapetin token error / null / expired
+            // try {
+            //     let verified = jwt.verify(token, secretkey)
+            //     console.log(verified);
+            // } catch (error) {
+            //     console.error(error)
+            // }
         }
         else{
             res.status(400).send("User tidak ditemukan");
