@@ -1,0 +1,18 @@
+USER
+register
+login
+premium
+cek detail
+update detail
+
+SONG
+search song 
+get song 
+
+PLAYLIST
+create playlist 
+edit playlist detail 
+add song to playlist 
+remove song from playlist 
+view playlist 
+delete playlist 
