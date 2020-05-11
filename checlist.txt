@@ -1,6 +1,6 @@
 USER
-register
-login
+register        
+login            
 premium
 cek detail
 update detail
