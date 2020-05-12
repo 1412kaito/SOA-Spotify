@@ -3,12 +3,13 @@ const sequelize = require('../database');
 
 const History = sequelize.define('History', {
     id_history:{
-        type: DataTypes.UUID, default:DataTypes.UUIDV1,
+        type: DataTypes.UUID, 
+        defaultValue:Sequelize.UUIDV1,
         primaryKey: true,
     },
     id_user: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true
     },
     activity: {
         type: DataTypes.TEXT('long'),
