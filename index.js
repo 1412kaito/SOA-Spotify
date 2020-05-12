@@ -12,7 +12,7 @@ App.listen(port, async ()=>{
     console.log(`Listening on port ${port}`);
     // let t = await User.sync({alter: true});
     //database.sync supaya seluruh model yang pernah terpanggil ke create table
-    // database.sync({alter: true});
+    database.sync({alter: true});
 
     // console.log(`hasil user sync ${t}`);
 })
