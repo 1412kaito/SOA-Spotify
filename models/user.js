@@ -4,8 +4,8 @@ const sequelize = require('../database');
 const User = sequelize.define('User', {
     email_user: {
         type: DataTypes.STRING,
-        allowNull: false,
-        
+        // allowNull: false,
+        primaryKey: true
     },
     password_user: {
         type: DataTypes.STRING,
@@ -20,5 +20,6 @@ const User = sequelize.define('User', {
         allowNull: true
     }
 })
+
 
 module.exports = User;

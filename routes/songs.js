@@ -44,13 +44,18 @@ router.get('/', async (req, res)=>{
         // console.log('response 2', response2);
         let obj = JSON.parse(response2.body)
         obj = obj['albums']
-        console.log('ini obj', obj);
-        
+        console.log('>>>', obj[0].tracks.items);
+        console.log(">>>>");
         let items = []
         
         for (let index = 0; index < obj.length; index++) {
             const current_track = obj[index];
-            let temp = current_track['tracks']['items'].map(e => {return {id: e['id'], title: e['name']}});
+            let temp = current_track['tracks']['items'].map(e => {
+                return {
+                    id: e['id'], title: e['name'],
+                    uri: e['uri'], external: e['external_urls'],
+                    details: e['href']
+                }});
             items.push(...temp);
         }
         
@@ -58,7 +63,7 @@ router.get('/', async (req, res)=>{
             // spotify_url: url,
             items
         );
-        console.log('lewat')
+        // console.log('lewat')
     } catch (error) {
         console.error(error)
     }

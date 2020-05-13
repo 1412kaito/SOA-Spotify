@@ -9,6 +9,7 @@ const port = process.env.PORT;
 const History = require('./models/history');
 const User = require('./models/user');
 const Playlist = require('./models/playlist');
+const Detail = require('./models/detail_playlist');
 
 App.use(morgan('dev'));
 
@@ -31,7 +32,11 @@ App.listen(port, async ()=>{
     console.log(`Listening on port ${port}`);
     // let t = await User.sync({alter: true});
     //database.sync supaya seluruh model yang pernah terpanggil ke create table
-    database.sync({alter: true});
+    //alter: tabel di update
+    // database.sync({alter: true});
+
+    //force: tabel di drop dan di create ulang
+    database.sync({force: true});
 
     // console.log(`hasil user sync ${t}`);
 })
