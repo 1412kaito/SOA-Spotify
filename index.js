@@ -8,6 +8,7 @@ const port = process.env.PORT;
 //modelnya perlu dipanggil supaya tabel ke create
 const History = require('./models/history');
 const User = require('./models/user');
+const Playlist = require('./models/playlist');
 
 App.use(morgan('dev'));
 
@@ -19,10 +20,10 @@ App.use( async (req, res, next)=>{
         activity: req.url
 //      , id_user:id_user
     })
-
-
     a.save();
+    
     next();
+
 })
 App.use('/api', router);
 

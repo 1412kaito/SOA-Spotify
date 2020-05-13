@@ -132,4 +132,33 @@ router.post("/getPremium", async(req, res)=>{
     }
 })
 
+router.put("/", async(req, res)=>{
+    let token = req.header("x-auth-token");
+    if(!token) res.status(404).send("Token not found!");
+    else{
+        try{
+            let user = jwt.verify(token, secretkey);
+            password_user= req.body.password_user,
+            nama_user= req.body.nama_user;
+            
+            let UserData = await User.findOne({
+                where: {"email_user": user.email_user}
+            });
+            if(password_user)UserData.password_user=password_user;
+            if(nama_user)UserData.nama_user=nama_user;
+            if(!password_user && !nama_user) res.status(400).json("Tidak ada data yang diupdate");
+            await UserData.save();
+            res.status(200).send({
+                message: "Berhasil update user",
+                UserData
+            })
+        }catch(err){
+            res.status(400).send(err);
+        }
+    }
+})
+
+
+
+
 module.exports=router;

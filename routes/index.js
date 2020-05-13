@@ -3,6 +3,7 @@ const router = express.Router();
 
 router.use("/user", require("./user"));
 router.use('/songs', require('./songs'));
+router.use('/playlist', require('./playlist'));
 
 //coba akses spotify api
 const axios = require('axios');
