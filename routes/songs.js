@@ -9,27 +9,39 @@ const User = userModel;
 const secretkey = process.env.SECRET_KEY;
 const helper = require('../helpers');
 
-// /api/song?country=/
 router.get('/', async (req, res)=>{
+    let currentoffset = 0;
+    let page = 1;
+    const market = req.query.market;
+    if (req.query.page && req.query.page < 6){
+        currentoffset = req.query.page - 1;
+        currentoffset *= 20;
+        page = req.query.page;
+        // currentoffset -= 1;
+        if (currentoffset < 0) currentoffset = 0;
+    }
     try {
         const spotify_token = await helper.getSpotifyToken();
         let response = await helper.myrequest({
-            url: 'https://api.spotify.com/v1/browse/new-releases?limit=10',
+            url: 'https://api.spotify.com/v1/browse/new-releases',
             headers: {
                 Authorization: 'Bearer '+spotify_token.access_token
             },
-            method: 'GET'
+            method: 'GET',
+            qs: {
+                limit: 20,
+                offset: currentoffset,
+                country: (market && market.length == 2) ? market : undefined
+            }
         })      
         let my_body = JSON.parse(response.body);
-        // console.log(response.body);
+        // console.log(my_body);
+        
         let albums = my_body['albums']['items'];
-        let url = my_body['albums']['href'];
-        // console.log(albums);
         
         let temp = albums.map(element => {
             return element['id']
         })
-        console.log('ini temp', temp.join(','));
         
         let response2 = await helper.myrequest({
             method:'get',
@@ -43,11 +55,12 @@ router.get('/', async (req, res)=>{
         })
         // console.log('response 2', response2);
         let obj = JSON.parse(response2.body)
+        // console.log(obj);
+
         obj = obj['albums']
-        console.log('>>>', obj[0].tracks.items);
-        console.log(">>>>");
-        let items = []
-        
+        let items = {}
+        items['page'] = parseInt(page)
+        items['data'] = []
         for (let index = 0; index < obj.length; index++) {
             const current_track = obj[index];
             let temp = current_track['tracks']['items'].map(e => {
@@ -56,19 +69,70 @@ router.get('/', async (req, res)=>{
                     uri: e['uri'], external: e['external_urls'],
                     details: e['href']
                 }});
-            items.push(...temp);
+            items['data'].push(...temp);
         }
         
         res.json(
-            // spotify_url: url,
             items
         );
-        // console.log('lewat')
     } catch (error) {
         console.error(error)
+        res.status(500).send(error)
     }
-    // res.send('/api/song/');
-})
+});
 
+// /api/song/query?keyword=asd&country=/
+router.get('/query', async(req, res)=>{
+    try {
+        let currentoffset = req.query.offset || 0;
+        let currentlimit = req.query.limit || 50;
+        const spotify_token = await helper.getSpotifyToken();
+        let hasil = await helper.myrequest({
+            url: 'https://api.spotify.com/v1/search',
+            headers: {
+                Authorization: 'Bearer '+spotify_token.access_token
+            },
+            method: 'GET',
+            qs: {
+                type:'track',
+                q: req.query.keyword,
+                offset: currentoffset,
+                limit: currentlimit
+            }
+        })
+        // console.log(hasil);
+        res.header('Content-Type', 'application/json')
+        let kembalian_raw = JSON.parse(hasil.body);
+        kembalian_spotify = kembalian_raw['tracks']['items'];
+        console.log(kembalian_raw);
+        
+        const kembalianAkhir = {
+            offset: kembalian_raw['tracks']['offset'],
+            limit: kembalian_raw['tracks']['limit'],
+            total: kembalian_raw['tracks']['total'], 
+        }
+        kembalianAkhir['data']= kembalian_spotify.map(element => {
+            return {
+                id: element['id'],
+                title: element['name'],
+                uri: element['uri'],
+                external: element['external_urls'],
+                details: element['href'],
+            }
+        });
+
+        res.send(kembalianAkhir)
+    } catch (error) {
+        // console.error('error', error);
+        res.status(500).json(error);
+    }
+
+
+    // res.send('masuk query');
+});
+
+router.get('/:id', async(req, res)=>{
+
+});
 
 module.exports = router;

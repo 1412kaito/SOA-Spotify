@@ -16,7 +16,9 @@ App.use(morgan('dev'));
 App.use( async (req, res, next)=>{
     //ambil detail user disini
     //apa bisa ya dicek dia mengakses lagu atau playlist apa
-
+/*
+asdsa
+*/
     let a = await History.build({
         activity: req.url
 //      , id_user:id_user
@@ -36,7 +38,7 @@ App.listen(port, async ()=>{
     // database.sync({alter: true});
 
     //force: tabel di drop dan di create ulang
-    database.sync({force: true});
+    // database.sync({force: true});
 
     // console.log(`hasil user sync ${t}`);
 })
