@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const sequelize = require('../database');
 const jwt = require("jsonwebtoken");
 
-const userModel = require("../models/user");
-const User = userModel;
-const playlistModel = require("../models/playlist");
-const Playlist = playlistModel;
+const User = require("../models/user");
+const Playlist = require("../models/playlist");
+
+const sequelize = require('sequelize');
+const operator = sequelize.Op; //untuk or, not dsb
 
 router.post("/", async(req, res)=>{
     let token = req.header("x-auth-token");
@@ -70,7 +70,65 @@ router.post("/", async(req, res)=>{
     }
 })
 
-    
+//get public playlist
 
+router.get('/', async(req, res)=>{
+    const token = req.headers['x-auth-token'];
+    console.log(token);
+    let page = parseInt(req.query.page) - 1 || 0
+    if (page < 0) page = 0;
+
+    let t = await checkuser(token, async (user)=>{
+        let x = await User.findOne({
+            where:{
+                email_user: user.email_user
+            },
+            attributes: ['email_user', 'nama_user', 'exp_premium']
+        })
+        console.log(x.toJSON());
+        return x;
+    })
+    let email_user = ''
+    if (t.email_user){
+        email_user = t.email_user
+    }
+    let playlists = await Playlist.findAll({
+        where: {
+            [operator.or]: [
+                {'jenis_playlist':1},
+                {email_user: email_user}
+            ]
+        },
+        limit: 10,
+        offset: page*10,
+        attributes: ['id', 'email_user', 'nama_playlist', 'deskripsi_playlist', 'jenis_playlist', 'jumlah_lagu']
+    })
+
+    playlists = playlists.map(e => {
+        return {
+            id_playlist: e.id,
+            creator: e.email_user,
+            deskripsi: e.deskripsi_playlist,
+            tipe: (e.jenis_playlist === 1)? 'public' : 'private',
+            jumlah_lagu: e.jumlah_lagu
+        }
+    })
+    res.json(playlists);
+})
+
+
+const checkuser = async(token, callback)=>{
+    const SECRET = process.env.SECRET_KEY;
+    try {
+        let u = jwt.verify(token, SECRET);
+        console.log(u);
+        return callback(u);
+    } catch (error) {
+        return {
+            error: error,
+            status: 401
+        }
+    }
+}
 
 module.exports= router;
