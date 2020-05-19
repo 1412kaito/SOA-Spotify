@@ -144,15 +144,18 @@ router.put("/", async(req, res)=>{
             let UserData = await User.findOne({
                 where: {"email_user": user.email_user}
             });
-            if(password_user)UserData.password_user=password_user;
-            if(nama_user)UserData.nama_user=nama_user;
-            if(!password_user && !nama_user) res.status(400).json("Tidak ada data yang diupdate");
+            if(password_user) UserData.password_user=password_user;
+            if(nama_user) UserData.nama_user=nama_user;
+            if(!password_user && !nama_user) {
+                res.status(400).json("Tidak ada data yang diupdate");
+                return
+            }
             await UserData.save();
             res.status(200).send({
                 message: "Berhasil update user",
                 UserData
             })
-        }catch(err){
+        } catch(err){
             res.status(400).send(err);
         }
     }
