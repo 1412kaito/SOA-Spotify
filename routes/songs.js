@@ -120,7 +120,6 @@ router.get('/query', async(req, res)=>{
                 details: element['href'],
             }
         });
-
         res.send(kembalianAkhir)
     } catch (error) {
         // console.error('error', error);
@@ -132,7 +131,37 @@ router.get('/query', async(req, res)=>{
 });
 
 router.get('/:id', async(req, res)=>{
+    console.log('halo');
+    try {
+        const id = req.params.id;
+        const token = await helper.getSpotifyToken();
+        let hasil = await helper.myrequest({
+            url: `https://api.spotify.com/v1/tracks/${id}`,
+            headers: {
+                Authorization: 'Bearer '+token.access_token
+            },
+            method: 'GET',
+        })
+        const track_object = JSON.parse(hasil.body)
+        const song = {};
+        
+        song.details = {
+            id: track_object.id,
+            title:track_object.name, uri: track_object.uri, preview: track_object.preview_url,
+            external_id: track_object.external_ids, external: track_object.external_urls
+        }
 
+        song.artists = []
+        for (let index = 0; index < track_object['artists'].length; index++) {
+            const element = track_object['artists'][index];
+            song.artists.push({name: element.name, id: element.id, uri: element.uri, profile: element.external_urls})
+        }
+
+        res.json(song);
+    } catch (error) {
+        console.error("ERROR", error)
+    }
+    // res.json({id: req.params.id})
 });
 
 module.exports = router;
