@@ -159,7 +159,8 @@ router.get('/:id', async(req, res)=>{
 
         res.json(song);
     } catch (error) {
-        console.error("ERROR", error)
+        console.error("ERROR", error);
+        res.status(400).send(error);
     }
     // res.json({id: req.params.id})
 });
