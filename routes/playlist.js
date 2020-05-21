@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 
 const User = require("../models/user");
 const Playlist = require("../models/playlist");
+const Detail = require("../models/detail_playlist");
 
 const sequelize = require('sequelize');
 const operator = sequelize.Op; //untuk or, not dsb
@@ -115,6 +116,43 @@ router.get('/', async(req, res)=>{
     })
     res.json(playlists);
 })
+
+router.post('/add',async (req,res)=>{
+    const token = req.headers['x-auth-token'];
+    console.log(token);
+    if(!token) res.status(404).send("Token not found!");
+    else{
+        try{
+            let user = jwt.verify(token, process.env.SECRET_KEY);
+            let nama_playlist=req.body.nama_playlist;
+            if(!nama_playlist) res.status(400).send("Nama playlist wajib dicantumkan");
+            else{
+                //cari playlist dari user tersebut dan namanya sesuai
+                let resPlaylist = await Playlist.findAll({
+                    where: {"email_user": user.email_user,"nama_playlist":nama_playlist}
+                });
+                let id_playlist=resPlaylist[0].dataValues.id;
+                let lagu=req.body.lagu;
+                lagu.forEach(async t => {
+                    let detailPlaylist = Detail.build({
+                        id_playlist:id_playlist,
+                        id_track: t,
+                    })
+                    let x = await detailPlaylist.save();                    
+                });
+               
+                res.status(200).send({
+                        message: `Berhasil menambahkan lagu pada playlist ${nama_playlist}`
+                });
+
+            }
+        }catch(err){
+            res.status(400).send(err);
+        }
+    }
+});
+
+
 
 
 const checkuser = async(token, callback)=>{

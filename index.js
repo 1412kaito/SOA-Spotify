@@ -32,13 +32,13 @@ App.use('/api', router);
 
 App.listen(port, async ()=>{
     console.log(`Listening on port ${port}`);
-    // let t = await User.sync({alter: true});
+     //let t = await User.sync({alter: true});
     //database.sync supaya seluruh model yang pernah terpanggil ke create table
     //alter: tabel di update
-    // database.sync({alter: true});
+    //database.sync({alter: true});
 
     //force: tabel di drop dan di create ulang
     // database.sync({force: true});
 
-    // console.log(`hasil user sync ${t}`);
+     // console.log(`hasil user sync ${t}`);
 })
