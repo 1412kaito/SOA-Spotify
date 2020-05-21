@@ -133,13 +133,18 @@ router.post('/add',async (req,res)=>{
                 });
                 let id_playlist=resPlaylist[0].dataValues.id;
                 let lagu=req.body.lagu;
-                lagu.forEach(async t => {
-                    let detailPlaylist = Detail.build({
+                
+                for(let i=0;i<lagu.length;i++) {
+                    let counter= await Detail.count({
+                        where: {id_playlist: id_playlist}
+                    });
+                    let detailPlaylist = await Detail.build({
                         id_playlist:id_playlist,
-                        id_track: t,
-                    })
-                    let x = await detailPlaylist.save();                    
-                });
+                        id_track: lagu[i],
+                        urutan_dalam_playlist:counter+1
+                    });
+                    let x = await detailPlaylist.save();         
+                }
                
                 res.status(200).send({
                         message: `Berhasil menambahkan lagu pada playlist ${nama_playlist}`
