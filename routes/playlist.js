@@ -155,7 +155,33 @@ router.post('/add',async (req,res)=>{
         }
     }
 });
-
+router.put('/update',async(req,res)=>{
+    const token = req.headers['x-auth-token'];
+    console.log(token);
+    if(!token) res.status(404).send("Token not found!");
+    else{
+        try{
+            let user = jwt.verify(token, process.env.SECRET_KEY);
+            let nama_playlist=req.body.nama_playlist,
+            deskripsi_playlist = req.body.deskripsi_playlist;
+            if(!nama_playlist) res.status(400).send("Nama playlist wajib dicantumkan");
+            else{
+                let dataplaylist = await Playlist.findOne({
+                    where: {"email_user": user.email_user,"nama_playlist":nama_playlist}
+                })
+                if(dataplaylist==null)res.status(400).send("Playlist Tidak Ditemukan");
+                else{
+                    dataplaylist.deskripsi_playlist=deskripsi_playlist;
+                    await dataplaylist.save();
+                    res.status(200).send("Sukses Mengganti Deskrpisi");
+                }
+             
+            }
+        }catch(err){
+            res.status(400).send(err);
+        }
+    }
+});
 
 
 
