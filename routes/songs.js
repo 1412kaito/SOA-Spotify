@@ -125,8 +125,6 @@ router.get('/query', async(req, res)=>{
         // console.error('error', error);
         res.status(500).json(error);
     }
-
-
     // res.send('masuk query');
 });
 

@@ -8,9 +8,15 @@ const User = userModel;
 
 const secretkey = process.env.SECRET_KEY;
 
-router.get("/", async (req, res)=>{
-    let resUser = await User.findAll();
-    res.json(resUser);
+router.get("/debug", async (req, res)=>{    
+    if (process.env.DEBUG == 'true'){
+        let resUser = await User.findAll();
+        res.json(resUser);
+    }
+    else {
+
+        res.status(404).json({});
+    }
     // res.send("ini user");
 });
 
@@ -58,7 +64,6 @@ router.post("/register", async (req, res)=>{
             }
         }
     }
-    
 })
 
 router.post('/login', async(req, res)=>{
@@ -161,6 +166,32 @@ router.put("/", async(req, res)=>{
     }
 })
 
+router.get('/', async (req, res)=>{
+    const token = req.headers['x-auth-token'];
+    try {
+        let user = jwt.verify(token, secretkey);
+        const myuser = await User.findOne({
+            where: {email_user: user.email_user},
+            attributes: [
+                'email_user', 'nama_user', 'exp_premium'
+            ]
+        })
+
+        const Playlist = require('../models/playlist');
+        const myplaylist = await Playlist.findAll({
+            where: {'email_user': user.email_user}
+        })
+
+        const kembalian = {
+            user: myuser,
+            playlist: myplaylist
+        }
+        res.json(kembalian);
+    } catch (error) {
+        console.error(error);
+        res.status(400).json(error);
+    }
+})
 
 
 
