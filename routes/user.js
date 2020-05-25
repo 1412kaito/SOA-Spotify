@@ -44,10 +44,22 @@ router.post("/register", async (req, res)=>{
     let nama_user = req.body.nama_user;
     let password_user = req.body.password_user;
 
-    if(!email_user || !nama_user || !password_user) res.status(400).send("Data harus lengkap");
+    if(!email_user || !nama_user || !password_user) {
+        // res.status(400).send("Data harus lengkap");
+        res.status(400).json({
+            status: 400,
+            message: "Data harus lengkap"
+        })
+    }
     else{
         let found = await getUser(email_user);
-        if(found) res.status(200).send("Email sudah dipakai");
+        if(found) {
+            // res.status(200).send("Email sudah dipakai");
+            res.status(400).json({
+                status: 400,
+                message: "Email sudah terdaftar dalam database"
+            })
+        }
         else{
             try{
                 let newUser = User.build({
@@ -56,11 +68,19 @@ router.post("/register", async (req, res)=>{
                     nama_user: nama_user
                 })
                 let x = await newUser.save();
-                console.log(x);
-                
-                res.status(200).send("Insert user baru berhasil");
+                // console.log(x);
+                // res.status(200).send("Insert user baru berhasil");
+                res.status(200).json({
+                    status: 200,
+                    message: 'Registrasi berhasil'
+                })
             }catch(error){
-                res.status(400).send(error);
+                console.error(error);
+                res.status(500).json({
+                    status: 500,
+                    message: error
+                });
+                // res.status(400).send(error);
             }
         }
     }
@@ -69,7 +89,13 @@ router.post("/register", async (req, res)=>{
 router.post('/login', async(req, res)=>{
     let email_user= req.body.email_user,
     password_user= req.body.password_user;
-    if(!email_user || !password_user) res.status(400).send("Data harus lengkap");
+    if(!email_user || !password_user) {
+        // res.status(400).send("Data harus lengkap");
+        res.status(400).json({
+            status: 400,
+            message: "Data harus lengkap"
+        });
+    }
     else{
         let found = await getUser(email_user, password_user);
         if(found) {
@@ -79,8 +105,11 @@ router.post('/login', async(req, res)=>{
             }, secretkey, {
                 expiresIn: '1d'
             });
-            res.status(200).send(token);
-
+            // res.status(200).send(token);
+            res.status(200).json({
+                status: 200,
+                token: token,
+            });
             //contoh verification jwt
             //try catch utk ndapetin token error / null / expired
             // try {
@@ -91,7 +120,11 @@ router.post('/login', async(req, res)=>{
             // }
         }
         else{
-            res.status(400).send("User tidak ditemukan");
+            // res.status(400).send("User tidak ditemukan");
+            res.status(400).json({
+                status: 400,
+                message: "User tidak ditemukan"
+            });
         }
     }
 })
