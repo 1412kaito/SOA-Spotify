@@ -199,7 +199,7 @@ router.put('/update',async(req,res)=>{
     }
 });
 
-router.delete('/delete',async(req,res)=>{
+router.delete('/deleteSong',async(req,res)=>{
     const token = req.headers['x-auth-token'];
     console.log(token);
     if(!token) res.status(404).send("Token not found!");
@@ -216,9 +216,10 @@ router.delete('/delete',async(req,res)=>{
                 if(dataplaylist==null)res.status(400).send({message:"Playlist Tidak Ditemukan"});
                 else{
                     await Detail.destroy({where:{"id_track":id_lagu}});
+                    dataplaylist.jumlah_lagu--;
+                    await dataplaylist.save();
                     res.status(200).send({message:"Lagu dengan id "+id_lagu+" berhasil dihapus"});
                 }
-             
             }
         }catch(err){
             res.status(400).send(err);
