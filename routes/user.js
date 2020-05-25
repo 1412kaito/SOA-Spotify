@@ -78,7 +78,7 @@ router.post("/register", async (req, res)=>{
                 console.error(error);
                 res.status(500).json({
                     status: 500,
-                    message: error
+                    message: error.message
                 });
                 // res.status(400).send(error);
             }
@@ -133,41 +133,73 @@ router.post("/getPremium", async(req, res)=>{
     let token = req.header("x-auth-token");
     let jumlah_bulan = parseInt(req.body.jumlah_bulan);
 
-    if(!token) res.status(404).send("Token not found!");
-    else{
-        try{
-            let user = jwt.verify(token, secretkey);
-            let UserData = await User.findOne({
-                where: {"email_user": user.email_user}
-            })
+    // if(!token) res.status(404).send("Token not found!");
+    // else{
+    try{
+        let user = jwt.verify(token, secretkey);
+        let UserData = await User.findOne({
+            where: {"email_user": user.email_user}
+        })
 
-            if(!jumlah_bulan) res.status(400).send("Data harus lengkap");
-            else{
-                 // dicek apakah sudah pernah get premium blm atau sudah exp
-                if(!UserData.exp_premium ||  new Date(UserData.exp_premium)< new Date()){
-                    let date = new Date();
-                    console.log(date);
-                    let new_exp_premium = date.setMonth(date.getMonth()+jumlah_bulan);
-                    UserData.exp_premium= new_exp_premium;
-                    
-                    try{
-                        UserData.save();
-                        res.status(200).send("Berhasil Get Premium");
-                    }catch(error){
-                        res.status(400).send(error);
-                    }
-                }else if(new Date(UserData.exp_premium)> new Date()){
-                    let exp_premium = new Date(UserData.exp_premium);
-                    res.status(400).send({
-                        message: "Anda sudah berlangganan premium hingga " +  exp_premium.getDate().toString().padStart(2,0) + "/"+ (exp_premium.getMonth()+1).toString().padStart(2,0) + "/"+ exp_premium.getFullYear().toString()
-                    })
-                }
-            }
-        }catch(error){
-            res.status(400).send(error);
+        if(!jumlah_bulan) {
+            // res.status(400).send("Data harus lengkap");
+            res.status(400).json({
+                status: 400,
+                message: "Data tidak lengkap"
+            });
         }
-        
+        else{
+            // dicek apakah sudah pernah get premium blm atau sudah exp
+            if(!UserData.exp_premium ||  new Date(UserData.exp_premium)< new Date()){
+                let date = new Date();
+                console.log(date);
+                let new_exp_premium = date.setMonth(date.getMonth()+jumlah_bulan);
+                UserData.exp_premium = new_exp_premium;
+                try{
+                    UserData.save();
+                    // res.status(200).send("Berhasil Get Premium");
+                    res.status(200).json({
+                        status: 200,
+                        message: 'Berhasil daftar premium',
+                        user: await User.findOne({
+                            where: {
+                                email_user: user.email_user
+                            },
+                            attributes: ['email_user', 'nama_user', 'exp_premium']
+                        })
+                    })
+                }catch(error){
+                    res.status(400).send(error);
+                    res.status(400).json({
+                        status: 400,
+                        message: error.message
+                    });
+                }
+            }else if(new Date(UserData.exp_premium)> new Date()){
+                let exp_premium = new Date(UserData.exp_premium);
+                res.status(400).json({
+                    status: 400,
+                    message: "Anda sudah berlangganan premium hingga " +  exp_premium.getDate().toString().padStart(2,0) + "/"+ (exp_premium.getMonth()+1).toString().padStart(2,0) + "/"+ exp_premium.getFullYear().toString(),
+                    user: await User.findOne({
+                        where: {
+                            email_user: user.email_user
+                        },
+                        attributes: ['email_user', 'nama_user', 'exp_premium']
+                    })
+                })
+                // res.status(400).send({
+                //     message: "Anda sudah berlangganan premium hingga " +  exp_premium.getDate().toString().padStart(2,0) + "/"+ (exp_premium.getMonth()+1).toString().padStart(2,0) + "/"+ exp_premium.getFullYear().toString()
+                // })
+            }
+        }
+    }catch(error){
+        res.status(400).json({
+            status: 400,
+            message: error.message
+        });
     }
+        
+    // }
 })
 
 router.put("/", async(req, res)=>{
