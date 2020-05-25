@@ -62,7 +62,6 @@ App.listen(port, async ()=>{
     if (!fs.existSync(path.join(__dirname, 'uploads'))){
         fs.mkdirSync(path.join(__dirname, 'uploads'));
         console.log("Created upload dir");
-        
     }
     
     database.sync({force: true});
