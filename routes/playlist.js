@@ -136,14 +136,13 @@ router.post('/add',async (req,res)=>{
     else{
         try{
             let user = jwt.verify(token, process.env.SECRET_KEY);
-            let nama_playlist=req.body.nama_playlist;
-            if(!nama_playlist) res.status(400).send("Nama playlist wajib dicantumkan");
+            let id_playlist=req.body.id_playlist;
+            if(!id_playlist) res.status(400).send("ID playlist wajib dicantumkan");
             else{
                 //cari playlist dari user tersebut dan namanya sesuai
-                let resPlaylist = await Playlist.findAll({
-                    where: {"email_user": user.email_user,"nama_playlist":nama_playlist}
+                let resPlaylist = await Playlist.findOne({
+                    where: {"email_user": user.email_user,"id":id_playlist}
                 });
-                let id_playlist=resPlaylist[0].dataValues.id;
                 let lagu=req.body.lagu;
                 
                 for(let i=0;i<lagu.length;i++) {
@@ -157,9 +156,11 @@ router.post('/add',async (req,res)=>{
                     });
                     let x = await detailPlaylist.save();         
                 }
-               
+                resPlaylist.jumlah_lagu+=lagu.length;
+                await resPlaylist.save();
+                
                 res.status(200).send({
-                        message: `Berhasil menambahkan lagu pada playlist ${nama_playlist}`
+                        message: `Berhasil menambahkan lagu pada playlist ${resPlaylist.nama_playlist}`
                 });
             }
         }catch(err){
@@ -175,18 +176,20 @@ router.put('/update',async(req,res)=>{
     else{
         try{
             let user = jwt.verify(token, process.env.SECRET_KEY);
-            let nama_playlist=req.body.nama_playlist,
-            deskripsi_playlist = req.body.deskripsi_playlist;
-            if(!nama_playlist) res.status(400).send("Nama playlist wajib dicantumkan");
+            let id_playlist=req.body.id_playlist,
+            deskripsi_playlist = req.body.deskripsi_playlist,jenis_playlist=req.body.jenis_playlist;
+            if(!nama_playlist) res.status(400).send("ID Playlist wajib dicantumkan");
+            else if(!jenis_playlist)res.status(400).send("Tipe Playlist Harap Dicantumkan");
             else{
                 let dataplaylist = await Playlist.findOne({
-                    where: {"email_user": user.email_user,"nama_playlist":nama_playlist}
+                    where: {"email_user": user.email_user,"id_playlist":id_playlist}
                 })
                 if(dataplaylist==null)res.status(400).send("Playlist Tidak Ditemukan");
                 else{
                     dataplaylist.deskripsi_playlist=deskripsi_playlist;
+                    dataplaylist.jenis_playlist=jenis_playlist;
                     await dataplaylist.save();
-                    res.status(200).send("Sukses Mengganti Deskrpisi");
+                    res.status(200).send("Sukses Update Playlist");
                 }
              
             }
