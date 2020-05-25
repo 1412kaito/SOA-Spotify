@@ -156,7 +156,7 @@ router.post("/getPremium", async(req, res)=>{
                 let new_exp_premium = date.setMonth(date.getMonth()+jumlah_bulan);
                 UserData.exp_premium = new_exp_premium;
                 try{
-                    UserData.save();
+                    await UserData.save();
                     // res.status(200).send("Berhasil Get Premium");
                     res.status(200).json({
                         status: 200,
@@ -177,9 +177,13 @@ router.post("/getPremium", async(req, res)=>{
                 }
             }else if(new Date(UserData.exp_premium)> new Date()){
                 let exp_premium = new Date(UserData.exp_premium);
-                res.status(400).json({
-                    status: 400,
-                    message: "Anda sudah berlangganan premium hingga " +  exp_premium.getDate().toString().padStart(2,0) + "/"+ (exp_premium.getMonth()+1).toString().padStart(2,0) + "/"+ exp_premium.getFullYear().toString(),
+
+                UserData.exp_premium = exp_premium.setMonth(exp_premium.getMonth() + jumlah_bulan);
+                await UserData.save();
+
+                res.status(200).json({
+                    status: 200,
+                    message: 'Berhasil perpanjang langganan',
                     user: await User.findOne({
                         where: {
                             email_user: user.email_user
@@ -187,6 +191,16 @@ router.post("/getPremium", async(req, res)=>{
                         attributes: ['email_user', 'nama_user', 'exp_premium']
                     })
                 })
+                // res.status(400).json({
+                //     status: 400,
+                //     message: "Anda sudah berlangganan premium hingga " +  exp_premium.getDate().toString().padStart(2,0) + "/"+ (exp_premium.getMonth()+1).toString().padStart(2,0) + "/"+ exp_premium.getFullYear().toString(),
+                //     user: await User.findOne({
+                //         where: {
+                //             email_user: user.email_user
+                //         },
+                //         attributes: ['email_user', 'nama_user', 'exp_premium']
+                //     })
+                // })
                 // res.status(400).send({
                 //     message: "Anda sudah berlangganan premium hingga " +  exp_premium.getDate().toString().padStart(2,0) + "/"+ (exp_premium.getMonth()+1).toString().padStart(2,0) + "/"+ exp_premium.getFullYear().toString()
                 // })
@@ -259,10 +273,15 @@ router.get('/', async (req, res)=>{
             user: myuser,
             playlist: myplaylist
         }
-        res.json(kembalian);
+        res.json({
+            status: 200,
+            ...kembalian
+        });
     } catch (error) {
         console.error(error);
-        res.status(400).json(error);
+        res.status(400).json({
+            status: 400, message: error.message
+        });
     }
 })
 
