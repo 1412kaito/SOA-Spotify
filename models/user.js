@@ -18,6 +18,10 @@ const User = sequelize.define('User', {
     exp_premium:{
         type: DataTypes.DATE,
         allowNull: true
+    },
+    image_path: {
+        type: DataTypes.STRING,
+        allowNull: true
     }
 })
 

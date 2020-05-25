@@ -8,6 +8,51 @@ const User = userModel;
 
 const secretkey = process.env.SECRET_KEY;
 
+const multer = require('multer');
+const fs = require('fs')
+const path = require('path')
+const upload = multer({
+    fileFilter: (req, file, callback)=>{
+        if (file.mimetype.includes('image')){
+            const token = req.headers['x-auth-token'];
+            try {
+                let user = jwt.verify(token, secretkey);
+            } catch (error) {
+                callback(error, false);
+            }
+            callback(null, true);
+        }
+        else {
+            const err = new multer.MulterError();
+            err.message = `Filetype bukan image. Tipe file yang diupload: ${file.mimetype}`;
+            callback(err, false);
+        }
+    },
+    storage: multer.diskStorage({
+        destination: (req, file, callback)=>{
+            if (! fs.existsSync(path.join('.', 'uploads'))){
+                fs.mkdirSync(path.join('.', 'uploads')); 
+            }
+            callback(null, path.join('.', 'uploads'))
+        },
+        filename: async (req, file, callback)=>{
+            const token = req.headers['x-auth-token'];
+            let user = jwt.verify(token, secretkey);
+            const email = user.email_user;
+            
+            let filename = Buffer.from(email).toString('base64').substr(0, 10);
+            filename += path.extname(file.originalname);
+
+            let UserData = await User.findOne({
+                where: {"email_user": user.email_user}
+            });
+            UserData.image_path = filename;
+            await UserData.save();
+            callback(null, filename);
+        }
+    }),
+})
+
 router.get("/debug", async (req, res)=>{    
     if (process.env.DEBUG == 'true'){
         let resUser = await User.findAll();
@@ -216,21 +261,20 @@ router.post("/getPremium", async(req, res)=>{
     // }
 })
 
-router.put("/", async(req, res)=>{
+router.put("/", upload.single('img'), async(req, res)=>{
     let token = req.header("x-auth-token");
-    // if(!token) res.status(404).send("Token not found!");
-    // else{
     try{
         let user = jwt.verify(token, secretkey);
-        password_user= req.body.password_user,
-        nama_user= req.body.nama_user;
-        
+        password_user = req.body.password_user,
+        nama_user = req.body.nama_user;
+
         let UserData = await User.findOne({
             where: {"email_user": user.email_user}
         });
-        if(password_user) UserData.password_user=password_user;
-        if(nama_user) UserData.nama_user=nama_user;
-        if(!password_user && !nama_user) {
+        if (password_user) UserData.password_user = password_user;
+        if (nama_user) UserData.nama_user = nama_user;
+
+        if(!password_user && !nama_user && !req.file) {
             res.status(400).json({status: 400, message: "Tidak ada data yang diupdate"});
             return
         }
@@ -244,13 +288,11 @@ router.put("/", async(req, res)=>{
             })
         })
     } catch(err){
-        // res.status(400).send(err);
         res.status(400).json({
             status: 400,
             message: err.message
         })
     }
-    // }
 })
 
 router.get('/', async (req, res)=>{
@@ -260,7 +302,7 @@ router.get('/', async (req, res)=>{
         const myuser = await User.findOne({
             where: {email_user: user.email_user},
             attributes: [
-                'email_user', 'nama_user', 'exp_premium'
+                'email_user', 'nama_user', 'exp_premium', 'image_path'
             ]
         })
 
@@ -270,9 +312,13 @@ router.get('/', async (req, res)=>{
         })
 
         const kembalian = {
-            user: myuser,
+            user: myuser.toJSON(),
             playlist: myplaylist
         }
+
+        kembalian.user.image_path = req.protocol + '://' + req.headers['host'] + '/uploads/'+ kembalian.user.image_path
+
+
         res.json({
             status: 200,
             ...kembalian
