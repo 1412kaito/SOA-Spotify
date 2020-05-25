@@ -9,70 +9,81 @@ const Detail = require("../models/detail_playlist");
 const sequelize = require('sequelize');
 const operator = sequelize.Op; //untuk or, not dsb
 
+const BATAS_PLAYLIST = 3;
+
 router.post("/", async(req, res)=>{
     let token = req.header("x-auth-token");
-    if(!token) res.status(404).send("Token not found!");
-    else{
-        try{
-            let user = jwt.verify(token, process.env.SECRET_KEY);
-            let nama_playlist= req.body.nama_playlist,
-            deskripsi_playlist = req.body.deskripsi_playlist;
+    // if(!token) res.status(404).send("Token not found!");
+    // else{
+    try{
+        let user = jwt.verify(token, process.env.SECRET_KEY);
+        let nama_playlist= req.body.nama_playlist,
+        deskripsi_playlist = req.body.deskripsi_playlist;
 
-            if(!nama_playlist) res.status(400).send("Nama playlist wajib dicantumkan");
-            else{
-                //cari apakah dia premium atau bukan
-                let resUser = await User.findOne({
-                    where: {"email_user": user.email_user}
-                })
+        if(!nama_playlist) {
+            // res.status(400).send("Nama playlist wajib dicantumkan");
+            res.status(400).json({
+                status: 400,
+                message: "Nama playlist wajib dicantumkan"
+            })
+        }
+        else{
+            //cari apakah dia premium atau bukan
+            let resUser = await User.findOne({
+                where: {"email_user": user.email_user}
+            })
+            if (!resUser) throw new Error('User tidak terdaftar dalam database');
+            //cari jumlah playlist yg sudah dibuat
+            let resPlaylist = await Playlist.findAll({
+                where: {"email_user": user.email_user}
+            });
 
-                //cari jumlah playlist yg sudah dibuat
-                let resPlaylist = await Playlist.findAll({
-                    where: {"email_user": user.email_user}
-                });
-
-                let exp= new Date(resUser.exp_premium);
-                console.log(resPlaylist.length);
-                console.log(exp);
-                //kalau free user
-                if(exp < new Date()  ){
-                    if(resPlaylist.length<3 ){ 
-                        console.log("masuk");
-                        let newPlaylist = Playlist.build({
-                            email_user: user.email_user,
-                            nama_playlist: nama_playlist,
-                            deskripsi_playlist: deskripsi_playlist
-                        })
-                        await newPlaylist.save();
-                        res.status(200).send({
-                            message: `Berhasil add playlist ${nama_playlist}`
-                        });
-                    }else{
-                        res.status(400).send("Free user hanya dapat membuat playlist maximal 3");
-                    }
-                // kalau premium bisa banyak
-                }else{
+            let exp= new Date(resUser.exp_premium);
+            // console.log(resPlaylist.length);
+            // console.log(exp);
+            //kalau free user
+            if(exp < new Date()  ){
+                if(resPlaylist.length < BATAS_PLAYLIST ){ 
+                    // console.log("masuk");
                     let newPlaylist = Playlist.build({
                         email_user: user.email_user,
                         nama_playlist: nama_playlist,
                         deskripsi_playlist: deskripsi_playlist
                     })
-                    let x = await newPlaylist.save();
-                    res.status(200).send({
+                    await newPlaylist.save();
+                    res.status(200).json({
+                        status: 200,
                         message: `Berhasil add playlist ${nama_playlist}`
                     });
+                } else{
+                    res.status(400).json({
+                        status: 400,
+                        message: `Free user hanya dapat membuat playlist maksimal ${BATAS_PLAYLIST}`
+                    });
                 }
-                console.log(resPlaylist.length);
-                
+            // kalau premium bisa banyak
+            } else{
+                let newPlaylist = Playlist.build({
+                    email_user: user.email_user,
+                    nama_playlist: nama_playlist,
+                    deskripsi_playlist: deskripsi_playlist
+                })
+                let x = await newPlaylist.save();
+                res.status(200).json({
+                    status: 200, 
+                    message: `Berhasil add playlist ${nama_playlist}`
+                });
             }
-            
-        }catch(err){
-            res.status(400).send(err);
+            // console.log(resPlaylist.length);
         }
+    }catch(err){
+        console.error(err);
+        res.status(400).json({status: 400, message: err.message});
     }
+    // }
 })
 
 //get public playlist
-
 router.get('/', async(req, res)=>{
     const token = req.headers['x-auth-token'];
     console.log(token);
@@ -86,7 +97,7 @@ router.get('/', async(req, res)=>{
             },
             attributes: ['email_user', 'nama_user', 'exp_premium']
         })
-        console.log(x.toJSON());
+        // console.log(x.toJSON());
         return x;
     })
     let email_user = ''
@@ -108,13 +119,14 @@ router.get('/', async(req, res)=>{
     playlists = playlists.map(e => {
         return {
             id_playlist: e.id,
+            nama: e.nama_playlist,
             creator: e.email_user,
             deskripsi: e.deskripsi_playlist,
             tipe: (e.jenis_playlist === 1)? 'public' : 'private',
             jumlah_lagu: e.jumlah_lagu
         }
     })
-    res.json(playlists);
+    res.json({status: 200, playlists});
 })
 
 router.post('/add',async (req,res)=>{
