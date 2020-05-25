@@ -178,7 +178,7 @@ router.put('/update',async(req,res)=>{
             let user = jwt.verify(token, process.env.SECRET_KEY);
             let id_playlist=req.body.id_playlist,
             deskripsi_playlist = req.body.deskripsi_playlist,jenis_playlist=req.body.jenis_playlist;
-            if(!nama_playlist) res.status(400).send("ID Playlist wajib dicantumkan");
+            if(!id_playlist) res.status(400).send("ID Playlist wajib dicantumkan");
             else if(!jenis_playlist)res.status(400).send("Tipe Playlist Harap Dicantumkan");
             else{
                 let dataplaylist = await Playlist.findOne({
