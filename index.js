@@ -74,6 +74,6 @@ App.listen(port, async ()=>{
     // database.sync({alter: true});
 
     //force: tabel di drop dan di create ulang
-
+    // database.sync({force: true});
      // console.log(`hasil user sync ${t}`);
 })
