@@ -132,8 +132,8 @@ router.get('/', async(req, res)=>{
 router.post('/add',async (req,res)=>{
     const token = req.headers['x-auth-token'];
     // console.log(token);
-    if(!token) res.status(404).send("Token not found!");
-    else{
+    // if(!token) res.status(404).send("Token not found!");
+    // else{
         try{
             let user = jwt.verify(token, process.env.SECRET_KEY);
             let id_playlist=req.body.id_playlist;
@@ -164,16 +164,17 @@ router.post('/add',async (req,res)=>{
                 });
             }
         }catch(err){
-            res.status(400).send(err);
+            console.error(err);
+            res.status(400).json({status: 400, message: err.message});
         }
-    }
+    // }
 });
 
 router.put('/update',async(req,res)=>{
     const token = req.headers['x-auth-token'];
     // console.log(token);
-    if(!token) res.status(404).send("Token not found!");
-    else{
+    // if(!token) res.status(404).send("Token not found!");
+    // else{
         try{
             let user = jwt.verify(token, process.env.SECRET_KEY);
             let id_playlist=req.body.id_playlist,
@@ -194,77 +195,80 @@ router.put('/update',async(req,res)=>{
              
             }
         }catch(err){
-            res.status(400).send(err);
+            console.error(err);
+            res.status(400).json({status: 400, message: err.message});
         }
-    }
+    // }
 });
 
 router.delete('/deleteSong',async(req,res)=>{
     const token = req.headers['x-auth-token'];
     // console.log(token);
-    if(!token) res.status(404).send("Token not found!");
-    else{
-        try{
-            let user = jwt.verify(token, process.env.SECRET_KEY);
-            let id_playlist=req.body.id_playlist,
-            id_lagu=req.body.id_lagu;
-            if(!id_playlist) res.status(400).send({message:"ID Playlist wajib dicantumkan"});
+    // if(!token) res.status(404).send("Token not found!");
+    // else{
+    try{
+        let user = jwt.verify(token, process.env.SECRET_KEY);
+        let id_playlist=req.body.id_playlist,
+        id_lagu=req.body.id_lagu;
+        if(!id_playlist) res.status(400).send({message:"ID Playlist wajib dicantumkan"});
+        else{
+            let dataplaylist = await Playlist.findOne({
+                where: {"email_user": user.email_user,"id":id_playlist}
+            })
+            if(dataplaylist==null)res.status(400).send({message:"Playlist Tidak Ditemukan"});
             else{
-                let dataplaylist = await Playlist.findOne({
-                    where: {"email_user": user.email_user,"id":id_playlist}
-                })
-                if(dataplaylist==null)res.status(400).send({message:"Playlist Tidak Ditemukan"});
-                else{
-                    await Detail.destroy({where:{"id_track":id_lagu}});
-                    dataplaylist.jumlah_lagu--;
-                    await dataplaylist.save();
-                    res.status(200).send({message:"Lagu dengan id "+id_lagu+" berhasil dihapus"});
-                }
+                await Detail.destroy({where:{"id_track":id_lagu}});
+                dataplaylist.jumlah_lagu--;
+                await dataplaylist.save();
+                res.status(200).send({message:"Lagu dengan id "+id_lagu+" berhasil dihapus"});
             }
-        }catch(err){
-            res.status(400).send(err);
         }
+    }catch(err){
+        console.error(err);
+        res.status(400).json({status: 400, message: err.message});
     }
+    // }
 });
 router.get("/getPlaylist",async(req,res)=>{
     const token = req.headers['x-auth-token'];
     // console.log(token);
-    if(!token) res.status(404).send("Token not found!");
-    else{
-        try{
-            let user = jwt.verify(token, process.env.SECRET_KEY);
-            let id_playlist=req.query.id_playlist;
-            if(!id_playlist) res.status(400).send({message:"ID Playlist wajib dicantumkan"});
+    // if(!token) res.status(404).send("Token not found!");
+    // else{
+    try{
+        let user = jwt.verify(token, process.env.SECRET_KEY);
+        let id_playlist=req.query.id_playlist;
+        if(!id_playlist) res.status(400).send({message:"ID Playlist wajib dicantumkan"});
+        else{
+            let dataplaylist = await Playlist.findOne({
+                where:{"id":id_playlist},
+                attributes: ['id', 'email_user', 'nama_playlist', 'deskripsi_playlist', 'jenis_playlist', 'jumlah_lagu']
+            })
+            if(dataplaylist==null)res.status(400).send({message:"Playlist Tidak Ditemukan"});
             else{
-                let dataplaylist = await Playlist.findOne({
-                    where:{"id":id_playlist},
-                    attributes: ['id', 'email_user', 'nama_playlist', 'deskripsi_playlist', 'jenis_playlist', 'jumlah_lagu']
-                })
-                if(dataplaylist==null)res.status(400).send({message:"Playlist Tidak Ditemukan"});
-                else{
-                    //jenis 1 = public
-                    if(dataplaylist.jenis_playlist==1){
+                //jenis 1 = public
+                if(dataplaylist.jenis_playlist==1){
+                    let detail_lagu= await Detail.findAll({
+                        where:{"id_playlist":id_playlist},order:['urutan_dalam_playlist'],
+                        attributes:['id_track','urutan_dalam_playlist']
+                    });
+                    res.status(200).send({message:{dataplaylist,detail_lagu}});
+                }else{
+                    if(user.email_user==dataplaylist.email_user){
                         let detail_lagu= await Detail.findAll({
-                            where:{"id_playlist":id_playlist},order:['urutan_dalam_playlist'],
+                            where:{"id":id_playlist},order:['urutan_dalam_playlist'],
                             attributes:['id_track','urutan_dalam_playlist']
                         });
                         res.status(200).send({message:{dataplaylist,detail_lagu}});
-                    }else{
-                        if(user.email_user==dataplaylist.email_user){
-                            let detail_lagu= await Detail.findAll({
-                                where:{"id":id_playlist},order:['urutan_dalam_playlist'],
-                                attributes:['id_track','urutan_dalam_playlist']
-                            });
-                            res.status(200).send({message:{dataplaylist,detail_lagu}});
-                        }else res.status(403).send({message:"Playlist ini bersifat private"});
-                    }
-                    
+                    }else res.status(403).send({message:"Playlist ini bersifat private"});
                 }
+                
             }
-        }catch(err){
-            res.status(400).send(err);
         }
+    }catch(err){
+        console.error(err);
+        res.status(400).json({status: 400, message: err.message});
     }
+    // }
 });
 const checkuser = async(token, callback)=>{
     const SECRET = process.env.SECRET_KEY;
