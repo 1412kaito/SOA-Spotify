@@ -144,24 +144,28 @@ router.post('/add',async (req,res)=>{
                     where: {"email_user": user.email_user,"id":id_playlist}
                 });
                 let lagu=req.body.lagu;
-                
-                for(let i=0;i<lagu.length;i++) {
-                    let counter= await Detail.count({
-                        where: {id_playlist: id_playlist}
+                if (resPlaylist){
+                    for(let i=0;i<lagu.length;i++) {
+                        let counter= await Detail.count({
+                            where: {id_playlist: id_playlist}
+                        });
+                        let detailPlaylist = await Detail.build({
+                            id_playlist:id_playlist,
+                            id_track: lagu[i],
+                            urutan_dalam_playlist:counter+1
+                        });
+                        let x = await detailPlaylist.save();         
+                    }
+                    resPlaylist.jumlah_lagu+=lagu.length;
+                    await resPlaylist.save();
+                    
+                    res.status(200).send({
+                            message: `Berhasil menambahkan lagu pada playlist ${resPlaylist.nama_playlist}`
                     });
-                    let detailPlaylist = await Detail.build({
-                        id_playlist:id_playlist,
-                        id_track: lagu[i],
-                        urutan_dalam_playlist:counter+1
-                    });
-                    let x = await detailPlaylist.save();         
                 }
-                resPlaylist.jumlah_lagu+=lagu.length;
-                await resPlaylist.save();
-                
-                res.status(200).send({
-                        message: `Berhasil menambahkan lagu pada playlist ${resPlaylist.nama_playlist}`
-                });
+                else {
+                    res.status(400).json({status: 400, message: "Anda tidak berhak mengubah playlist ini"});
+                }
             }
         }catch(err){
             console.error(err);
@@ -259,7 +263,7 @@ router.get("/getPlaylist",async(req,res)=>{
                             attributes:['id_track','urutan_dalam_playlist']
                         });
                         res.status(200).send({message:{dataplaylist,detail_lagu}});
-                    }else res.status(403).send({message:"Playlist ini bersifat private"});
+                    } else res.status(403).send({message:"Playlist ini bersifat private"});
                 }
                 
             }
