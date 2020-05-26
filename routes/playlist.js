@@ -53,7 +53,8 @@ router.post("/", async(req, res)=>{
                     await newPlaylist.save();
                     res.status(200).json({
                         status: 200,
-                        message: `Berhasil add playlist ${nama_playlist}`
+                        message: `Berhasil add playlist ${nama_playlist}`,
+                        playlist: newPlaylist
                     });
                 } else{
                     res.status(400).json({
