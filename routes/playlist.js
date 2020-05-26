@@ -182,7 +182,7 @@ router.put('/update',async(req,res)=>{
             else if(!jenis_playlist)res.status(400).send({message:"Tipe Playlist Harap Dicantumkan"});
             else{
                 let dataplaylist = await Playlist.findOne({
-                    where: {"email_user": user.email_user,"id_playlist":id_playlist}
+                    where: {"email_user": user.email_user,"id":id_playlist}
                 })
                 if(dataplaylist==null)res.status(400).send({message:"Playlist Tidak Ditemukan"});
                 else{
@@ -252,7 +252,7 @@ router.get("/getPlaylist",async(req,res)=>{
                     }else{
                         if(user.email_user==dataplaylist.email_user){
                             let detail_lagu= await Detail.findAll({
-                                where:{"id_playlist":id_playlist},order:['urutan_dalam_playlist'],
+                                where:{"id":id_playlist},order:['urutan_dalam_playlist'],
                                 attributes:['id_track','urutan_dalam_playlist']
                             });
                             res.status(200).send({message:{dataplaylist,detail_lagu}});
