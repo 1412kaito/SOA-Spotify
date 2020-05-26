@@ -241,6 +241,7 @@ router.get("/getPlaylist",async(req,res)=>{
     // if(!token) res.status(404).send("Token not found!");
     // else{
     try{
+        let id_playlist=req.query.id_playlist;
         if(!id_playlist) res.status(400).send({message:"ID Playlist wajib dicantumkan"});
         else{
             let dataplaylist = await Playlist.findOne({
@@ -258,7 +259,6 @@ router.get("/getPlaylist",async(req,res)=>{
                     res.status(200).send({message:{dataplaylist,detail_lagu}});
                 }else{
                     let user = jwt.verify(token, process.env.SECRET_KEY);
-                    let id_playlist=req.query.id_playlist;
                     if(user.email_user==dataplaylist.email_user){
                         let detail_lagu= await Detail.findAll({
                             where:{"id":id_playlist},order:['urutan_dalam_playlist'],
