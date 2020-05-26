@@ -261,7 +261,7 @@ router.get("/getPlaylist",async(req,res)=>{
                     let user = jwt.verify(token, process.env.SECRET_KEY);
                     if(user.email_user==dataplaylist.email_user){
                         let detail_lagu= await Detail.findAll({
-                            where:{"id":id_playlist},order:['urutan_dalam_playlist'],
+                            where:{"id_playlist":id_playlist},order:['urutan_dalam_playlist'],
                             attributes:['id_track','urutan_dalam_playlist']
                         });
                         res.status(200).send({message:{dataplaylist,detail_lagu}});
