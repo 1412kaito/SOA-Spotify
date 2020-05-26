@@ -56,6 +56,18 @@ App.use((error, request, response, next)=>{
 });
 
 App.listen(port, async ()=>{
+    const fs = require('fs');
+    const path = require('path');
+    
+    if (!fs.existSync(path.join(__dirname, 'uploads'))){
+        fs.mkdirSync(path.join(__dirname, 'uploads'));
+        console.log("Created upload dir");
+        
+    }
+    
+    database.sync({force: true});
+    console.log('Reset database');
+    
     console.log(`Listening on port ${port}`);
      //let t = await User.sync({alter: true});
     //database.sync supaya seluruh model yang pernah terpanggil ke create table
@@ -63,7 +75,6 @@ App.listen(port, async ()=>{
     // database.sync({alter: true});
 
     //force: tabel di drop dan di create ulang
-    // database.sync({force: true});
 
      // console.log(`hasil user sync ${t}`);
 })
