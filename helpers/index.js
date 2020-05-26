@@ -12,7 +12,7 @@ function myrequest(options){
 async function getSpotifyToken() {
     let s = process.env.CLIENT_ID + ":" + process.env.CLIENT_SECRET;
     let b64 = Buffer.from(s).toString('base64');
-    console.log(b64);
+    // console.log(b64);
     var options = {
         'method': 'POST',
         'url': 'https://accounts.spotify.com/api/token',

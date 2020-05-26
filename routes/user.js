@@ -197,7 +197,7 @@ router.post("/getPremium", async(req, res)=>{
             // dicek apakah sudah pernah get premium blm atau sudah exp
             if(!UserData.exp_premium ||  new Date(UserData.exp_premium)< new Date()){
                 let date = new Date();
-                console.log(date);
+                // console.log(date);
                 let new_exp_premium = date.setMonth(date.getMonth()+jumlah_bulan);
                 UserData.exp_premium = new_exp_premium;
                 try{

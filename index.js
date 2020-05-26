@@ -58,10 +58,11 @@ App.use((error, request, response, next)=>{
 App.listen(port, async ()=>{
     const fs = require('fs');
     const path = require('path');
-    
-    if (!fs.existSync(path.join(__dirname, 'uploads'))){
+    try {
         fs.mkdirSync(path.join(__dirname, 'uploads'));
         console.log("Created upload dir");
+    } catch (error) {
+        console.error(error);        
     }
     
     database.sync({force: true});

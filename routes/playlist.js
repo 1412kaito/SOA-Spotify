@@ -86,7 +86,7 @@ router.post("/", async(req, res)=>{
 //get public playlist
 router.get('/', async(req, res)=>{
     const token = req.headers['x-auth-token'];
-    console.log(token);
+    // console.log(token);
     let page = parseInt(req.query.page) - 1 || 0
     if (page < 0) page = 0;
 
@@ -131,7 +131,7 @@ router.get('/', async(req, res)=>{
 
 router.post('/add',async (req,res)=>{
     const token = req.headers['x-auth-token'];
-    console.log(token);
+    // console.log(token);
     if(!token) res.status(404).send("Token not found!");
     else{
         try{
@@ -171,7 +171,7 @@ router.post('/add',async (req,res)=>{
 
 router.put('/update',async(req,res)=>{
     const token = req.headers['x-auth-token'];
-    console.log(token);
+    // console.log(token);
     if(!token) res.status(404).send("Token not found!");
     else{
         try{
@@ -201,7 +201,7 @@ router.put('/update',async(req,res)=>{
 
 router.delete('/deleteSong',async(req,res)=>{
     const token = req.headers['x-auth-token'];
-    console.log(token);
+    // console.log(token);
     if(!token) res.status(404).send("Token not found!");
     else{
         try{
@@ -228,7 +228,7 @@ router.delete('/deleteSong',async(req,res)=>{
 });
 router.get("/getPlaylist",async(req,res)=>{
     const token = req.headers['x-auth-token'];
-    console.log(token);
+    // console.log(token);
     if(!token) res.status(404).send("Token not found!");
     else{
         try{
@@ -270,7 +270,7 @@ const checkuser = async(token, callback)=>{
     const SECRET = process.env.SECRET_KEY;
     try {
         let u = jwt.verify(token, SECRET);
-        console.log(u);
+        // console.log(u);
         return callback(u);
     } catch (error) {
         return {

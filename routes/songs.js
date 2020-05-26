@@ -104,7 +104,7 @@ router.get('/query', async(req, res)=>{
         res.header('Content-Type', 'application/json')
         let kembalian_raw = JSON.parse(hasil.body);
         kembalian_spotify = kembalian_raw['tracks']['items'];
-        console.log(kembalian_raw);
+        // console.log(kembalian_raw);
         
         const kembalianAkhir = {
             offset: kembalian_raw['tracks']['offset'],
@@ -129,7 +129,7 @@ router.get('/query', async(req, res)=>{
 });
 
 router.get('/:id', async(req, res)=>{
-    console.log('halo');
+    // console.log('halo');
     try {
         const id = req.params.id;
         const token = await helper.getSpotifyToken();
