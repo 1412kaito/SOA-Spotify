@@ -211,7 +211,7 @@ router.delete('/deleteSong',async(req,res)=>{
             if(!id_playlist) res.status(400).send({message:"ID Playlist wajib dicantumkan"});
             else{
                 let dataplaylist = await Playlist.findOne({
-                    where: {"email_user": user.email_user,"id_playlist":id_playlist}
+                    where: {"email_user": user.email_user,"id":id_playlist}
                 })
                 if(dataplaylist==null)res.status(400).send({message:"Playlist Tidak Ditemukan"});
                 else{
@@ -226,7 +226,40 @@ router.delete('/deleteSong',async(req,res)=>{
         }
     }
 });
-
+router.get("/getPlaylist",async(req,res)=>{
+    const token = req.headers['x-auth-token'];
+    console.log(token);
+    if(!token) res.status(404).send("Token not found!");
+    else{
+        try{
+            let user = jwt.verify(token, process.env.SECRET_KEY);
+            let id_playlist=req.query.id_playlist;
+            if(!id_playlist) res.status(400).send({message:"ID Playlist wajib dicantumkan"});
+            else{
+                let dataplaylist = await Playlist.findOne({
+                    where: {"email_user": user.email_user,"id":id_playlist},
+                    attributes: ['id', 'email_user', 'nama_playlist', 'deskripsi_playlist', 'jenis_playlist', 'jumlah_lagu']
+                })
+                if(dataplaylist==null)res.status(400).send({message:"Playlist Tidak Ditemukan"});
+                else{
+                    //jenis 1 = public
+                    if(dataplaylist.jenis_playlist==1){
+                        let detail_lagu= await Detail.findAll({
+                            where:{"id_playlist":id_playlist},order:['urutan_dalam_playlist'],
+                            attributes:['id_track','urutan_dalam_playlist']
+                        });
+                        if(user.email_user==dataplaylist.email_user)res.status(200).send({message:{dataplaylist,detail_lagu}});
+                    }else{
+                        res.status(403).send({message:"Playlist ini bersifat private"});
+                    }
+                    
+                }
+            }
+        }catch(err){
+            res.status(400).send(err);
+        }
+    }
+});
 const checkuser = async(token, callback)=>{
     const SECRET = process.env.SECRET_KEY;
     try {
