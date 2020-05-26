@@ -45,7 +45,7 @@ router.post("/", async(req, res)=>{
             if(exp < new Date()  ){
                 if(resPlaylist.length < BATAS_PLAYLIST ){ 
                     // console.log("masuk");
-                    let newPlaylist = Playlist.build({
+                    let newPlaylist = await Playlist.build({
                         email_user: user.email_user,
                         nama_playlist: nama_playlist,
                         deskripsi_playlist: deskripsi_playlist
@@ -64,7 +64,7 @@ router.post("/", async(req, res)=>{
                 }
             // kalau premium bisa banyak
             } else{
-                let newPlaylist = Playlist.build({
+                let newPlaylist = await Playlist.build({
                     email_user: user.email_user,
                     nama_playlist: nama_playlist,
                     deskripsi_playlist: deskripsi_playlist
@@ -72,7 +72,8 @@ router.post("/", async(req, res)=>{
                 let x = await newPlaylist.save();
                 res.status(200).json({
                     status: 200, 
-                    message: `Berhasil add playlist ${nama_playlist}`
+                    message: `Berhasil add playlist ${nama_playlist}`,
+                    playlist: newPlaylist
                 });
             }
             // console.log(resPlaylist.length);
