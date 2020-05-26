@@ -237,7 +237,7 @@ router.get("/getPlaylist",async(req,res)=>{
             if(!id_playlist) res.status(400).send({message:"ID Playlist wajib dicantumkan"});
             else{
                 let dataplaylist = await Playlist.findOne({
-                    where: {"email_user": user.email_user,"id":id_playlist},
+                    where:{"id":id_playlist},
                     attributes: ['id', 'email_user', 'nama_playlist', 'deskripsi_playlist', 'jenis_playlist', 'jumlah_lagu']
                 })
                 if(dataplaylist==null)res.status(400).send({message:"Playlist Tidak Ditemukan"});
@@ -248,9 +248,15 @@ router.get("/getPlaylist",async(req,res)=>{
                             where:{"id_playlist":id_playlist},order:['urutan_dalam_playlist'],
                             attributes:['id_track','urutan_dalam_playlist']
                         });
-                        if(user.email_user==dataplaylist.email_user)res.status(200).send({message:{dataplaylist,detail_lagu}});
+                        res.status(200).send({message:{dataplaylist,detail_lagu}});
                     }else{
-                        res.status(403).send({message:"Playlist ini bersifat private"});
+                        if(user.email_user==dataplaylist.email_user){
+                            let detail_lagu= await Detail.findAll({
+                                where:{"id_playlist":id_playlist},order:['urutan_dalam_playlist'],
+                                attributes:['id_track','urutan_dalam_playlist']
+                            });
+                            res.status(200).send({message:{dataplaylist,detail_lagu}});
+                        }else res.status(403).send({message:"Playlist ini bersifat private"});
                     }
                     
                 }
