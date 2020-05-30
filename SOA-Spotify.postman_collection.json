@@ -1,0 +1,3647 @@
+{
+	"info": {
+		"_postman_id": "8331ad2d-8c62-41b5-89e4-3b1ea926f24c",
+		"name": "SOA-Spotify",
+		"description": "Proyek Mata Kuliah Service Oriented Architecture  \nOleh: \n+ Ivan Marcellino - 217116609  \n+ Katherine Limanu - 217116627  \n+ Matthew Gunawan - 217116621",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "USER RESOURCES",
+			"item": [
+				{
+					"name": "REGISTER",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "0a1536c9-b976-426b-a0f8-bbc6e7336217",
+								"exec": [
+									"let current = parseInt(pm.collectionVariables.get(\"register_current_iter\"));\r",
+									"\r",
+									"if (!current || current == 1) {\r",
+									"    pm.test(\"Registrasi user #1. Status code is 200\", function () {\r",
+									"        pm.response.to.have.status(200);\r",
+									"    });\r",
+									"    pm.test(\"Cek pesan\", function () {\r",
+									"        var jsonData = pm.response.json();\r",
+									"        pm.expect(jsonData.message).to.eql(\"Registrasi berhasil\");\r",
+									"    });\r",
+									"    pm.collectionVariables.set(\"register_current_iter\", current+1);\r",
+									"    postman.setNextRequest(\"REGISTER\");\r",
+									"\r",
+									"    // pm.collectionVariables.set(\"target_status\", 400);\r",
+									"}\r",
+									"else if (current === 2){\r",
+									"    pm.test(\"Registrasi user #2. Status code is 200\", function () {\r",
+									"        pm.response.to.have.status(200);\r",
+									"    });\r",
+									"    pm.test(\"Cek pesan\", function () {\r",
+									"        var jsonData = pm.response.json();\r",
+									"        pm.expect(jsonData.message).to.eql(\"Registrasi berhasil\");\r",
+									"    });\r",
+									"    pm.collectionVariables.set(\"register_current_iter\", current+1);\r",
+									"    postman.setNextRequest(\"REGISTER\");\r",
+									"}\r",
+									"else {\r",
+									"    pm.test(\"Status code is 400, user kembar\", function () {\r",
+									"        pm.response.to.have.status(400);\r",
+									"    });\r",
+									"\r",
+									"    pm.test(\"Cek pesan\", function () {\r",
+									"        var jsonData = pm.response.json();\r",
+									"        pm.expect(jsonData.message).to.eql(\"Email sudah terdaftar dalam database\");\r",
+									"    });\r",
+									"    postman.setNextRequest('LOGIN');\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "72000948-9a69-4e2e-a57b-9cbace8f09e3",
+								"exec": [
+									"let current = parseInt(pm.collectionVariables.get(\"register_current_iter\"));\r",
+									"\r",
+									"if (!current){\r",
+									"    current = 1;\r",
+									"}\r",
+									"\r",
+									"switch(current){\r",
+									"    case 1: //register user biasa\r",
+									"    pm.collectionVariables.set('current_email', pm.collectionVariables.get('email_regular'));\r",
+									"    pm.collectionVariables.set('current_nama', pm.collectionVariables.get('nama_regular'));\r",
+									"    pm.collectionVariables.set('current_password', pm.collectionVariables.get('password_regular'));\r",
+									"    break;\r",
+									"    case 2: //register user premium\r",
+									"    pm.collectionVariables.set('current_email', pm.collectionVariables.get('email_premium'));\r",
+									"    pm.collectionVariables.set('current_nama', pm.collectionVariables.get('nama_premium'));\r",
+									"    pm.collectionVariables.set('current_password', pm.collectionVariables.get('password_premium'));\r",
+									"    break;\r",
+									"    case 3: //coba register kembar\r",
+									"    pm.collectionVariables.set('current_email', pm.collectionVariables.get('email_regular'));\r",
+									"    pm.collectionVariables.set('current_nama', pm.collectionVariables.get('nama_regular'));\r",
+									"    pm.collectionVariables.set('current_password', pm.collectionVariables.get('password_regular'));\r",
+									"    break;\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email_user",
+									"value": "{{current_email}}",
+									"type": "text"
+								},
+								{
+									"key": "nama_user",
+									"value": "{{current_nama}}",
+									"type": "text"
+								},
+								{
+									"key": "password_user",
+									"value": "{{current_password}}",
+									"type": "text"
+								}
+							],
+							"options": {
+								"urlencoded": {}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/user/register",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"register"
+							]
+						},
+						"description": "Endpoint untuk melakukan registrasi user \r\n\r\nParameter: \r\n+ email_user: Required, String\r\n+ nama_user: Required, String\r\n+ password_user: Required, String\r\n\r\nResponse: \r\n+ Message: pesan register sukses/gagal"
+					},
+					"response": [
+						{
+							"name": "REGISTER",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "email_user",
+											"value": "email@email.com",
+											"type": "text"
+										},
+										{
+											"key": "nama_user",
+											"value": "Nama User",
+											"type": "text"
+										},
+										{
+											"key": "password_user",
+											"value": "password",
+											"type": "text"
+										}
+									],
+									"options": {
+										"urlencoded": {}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/api/user/register",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"user",
+										"register"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Cowboy"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "46"
+								},
+								{
+									"key": "Etag",
+									"value": "W/\"2e-4Wsa0Zn+kBj6F//7Nsgrod01yjM\""
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 26 May 2020 07:27:33 GMT"
+								},
+								{
+									"key": "Via",
+									"value": "1.1 vegur"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 200,\n    \"message\": \"Registrasi berhasil\"\n}"
+						},
+						{
+							"name": "REGISTER - duplikat",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "email_user",
+											"value": "email@email.com",
+											"type": "text"
+										},
+										{
+											"key": "nama_user",
+											"value": "nama user",
+											"type": "text"
+										},
+										{
+											"key": "password_user",
+											"value": "password",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/api/user/register",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"user",
+										"register"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "63"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"3f-9pNEnAWjmvjJYWaM9vo+iMn+SDQ\""
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 25 May 2020 04:09:31 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 400,\n    \"message\": \"Email sudah terdaftar dalam database\"\n}"
+						},
+						{
+							"name": "REGISTER - data tidak lengkap",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "email_user",
+											"value": "email@email.com",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "nama_user",
+											"value": "nama user",
+											"type": "text"
+										},
+										{
+											"key": "password_user",
+											"value": "password",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/api/user/register",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"user",
+										"register"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "45"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"2d-BmFz9DfIyIBZD3nID6zNRTCiA8Q\""
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 25 May 2020 04:09:48 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 400,\n    \"message\": \"Data harus lengkap\"\n}"
+						}
+					]
+				},
+				{
+					"name": "LOGIN",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "22570bb3-ed68-410c-837f-2adeeedb2583",
+								"exec": [
+									"let current = parseInt(pm.collectionVariables.get(\"login_current_iter\"));\r",
+									"if (!current) current = 1;\r",
+									"\r",
+									"switch (current){\r",
+									"    case 1:\r",
+									"        console.log('masuk current 1')\r",
+									"        pm.variables.set('current_email', pm.variables.get('email_regular')); \r",
+									"        pm.variables.set('current_password', pm.variables.get('password_regular')); \r",
+									"    break;\r",
+									"    \r",
+									"    case 2:\r",
+									"        console.log('masuk current 2')\r",
+									"        pm.variables.set('current_email', pm.variables.get('email_premium')); \r",
+									"        pm.variables.set('current_password', pm.variables.get('password_premium')); \r",
+									"    break;\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "d911fddf-8ce0-4737-bcdb-1ed6e094f21c",
+								"exec": [
+									"let current = parseInt(pm.collectionVariables.get(\"login_current_iter\"));\r",
+									"if (!current) current = 1;\r",
+									"\r",
+									"switch (current){\r",
+									"    case 1:\r",
+									"        pm.test(\"Login user reguler. Status code is 200\", function () {\r",
+									"            pm.response.to.have.status(200);\r",
+									"            var jsonData = pm.response.json();\r",
+									"            //save token\r",
+									"            pm.collectionVariables.set(\"user-regular-login-token\", jsonData.token);\r",
+									"            console.log('reguler', jsonData.token)\r",
+									"        });\r",
+									"        postman.setNextRequest('LOGIN');\r",
+									"        current += 1;\r",
+									"        pm.collectionVariables.set('login_current_iter', current);\r",
+									"    break;\r",
+									"    case 2: \r",
+									"        pm.test(\"Login user Premium. Status code is 200\", function () {\r",
+									"            pm.response.to.have.status(200);\r",
+									"            var jsonData = pm.response.json();\r",
+									"            pm.collectionVariables.set(\"user-premium-login-token\", jsonData.token);\r",
+									"            console.log('premium', jsonData.token)\r",
+									"        });\r",
+									"    break;\r",
+									"    default: \r",
+									"        pm.test(\"Status code is 200 \"+current, function () {\r",
+									"            pm.response.to.have.status(200);\r",
+									"        });\r",
+									"}\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email_user",
+									"value": "{{current_email}}",
+									"type": "text"
+								},
+								{
+									"key": "password_user",
+									"value": "{{current_password}}",
+									"type": "text"
+								}
+							],
+							"options": {
+								"urlencoded": {}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/user/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"login"
+							]
+						},
+						"description": "Endpoint untuk melakukan login user \r\n\r\nParameter: \r\n+ email_user: Required, String\r\n+ password_user: Required, String\r\n\r\nResponse: \r\n+ token : jwt token untuk autentikasi user"
+					},
+					"response": [
+						{
+							"name": "LOGIN - gagal",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "email_user",
+											"value": "email@email.com",
+											"type": "text"
+										},
+										{
+											"key": "password_user",
+											"value": "passwordsalah",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/api/user/login",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"user",
+										"login"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "47"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"2f-Ah34Bw+Ku+GurrVkAGt0QrcLHBs\""
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 25 May 2020 04:12:16 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 400,\n    \"message\": \"User tidak ditemukan\"\n}"
+						},
+						{
+							"name": "LOGIN - berhasil",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "email_user",
+											"value": "email@email.com",
+											"type": "text"
+										},
+										{
+											"key": "password_user",
+											"value": "password",
+											"type": "text"
+										}
+									],
+									"options": {
+										"urlencoded": {}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/api/user/login",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"user",
+										"login"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Cowboy"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "194"
+								},
+								{
+									"key": "Etag",
+									"value": "W/\"c2-0EDSe3N8NmxXhX0awfD6CyQM7BQ\""
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 26 May 2020 07:32:32 GMT"
+								},
+								{
+									"key": "Via",
+									"value": "1.1 vegur"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 200,\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbF91c2VyIjoiZW1haWxAZW1haWwuY29tIiwiaWF0IjoxNTkwNDc4MzUyLCJleHAiOjE1OTA1NjQ3NTJ9.BScakWF8Euxz44T38X6vR0zfRCrljMKmuQZXwD-a_EA\"\n}"
+						},
+						{
+							"name": "LOGIN - data tidak lengkap",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "email_user",
+											"value": "email@email.com",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{url}}/api/user/login",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"user",
+										"login"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "45"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"2d-BmFz9DfIyIBZD3nID6zNRTCiA8Q\""
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 25 May 2020 04:12:27 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 400,\n    \"message\": \"Data harus lengkap\"\n}"
+						}
+					]
+				},
+				{
+					"name": "PREMIUM",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "cd5057ec-7524-4f85-bf78-9b399926a03d",
+								"exec": [
+									"let iter = parseInt(pm.collectionVariables.get('premium-iter'));\r",
+									"if (!iter) iter = 1;\r",
+									"\r",
+									"pm.variables.set('token-user', pm.collectionVariables.get('user-premium-login-token'))\r",
+									"let bulan = parseInt(pm.collectionVariables.get('jumlah-bulan'));\r",
+									"if (!bulan) bulan = 1;\r",
+									"pm.variables.set('jumlah-bulan', bulan);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "238a8e23-dc15-4f60-831c-fa7f962c7cfe",
+								"exec": [
+									"let iter = parseInt(pm.collectionVariables.get('premium-iter'));\r",
+									"if (!iter) iter = 1;\r",
+									"\r",
+									"switch(iter){\r",
+									"    case 1:\r",
+									"    pm.test(\"Cek pesan dan data user\", function () {\r",
+									"        var jsonData = pm.response.json();\r",
+									"        pm.expect(jsonData.message).to.eql(\"Berhasil daftar premium\");\r",
+									"        pm.expect(jsonData.user.email_user).to.eql(\"premium@email.com\");\r",
+									"    });\r",
+									"    pm.collectionVariables.set('premium-iter', iter+1)\r",
+									"    postman.setNextRequest('PREMIUM');\r",
+									"    break;\r",
+									"    case 2:\r",
+									"    pm.test(\"Cek pesan dan data user\", function () {\r",
+									"        var jsonData = pm.response.json();\r",
+									"        pm.expect(jsonData.message).to.eql(\"Berhasil perpanjang langganan\");\r",
+									"        pm.expect(jsonData.user.email_user).to.eql(\"premium@email.com\");\r",
+									"    });\r",
+									"    break;\r",
+									"}\r",
+									"pm.test(\"Status code is 200 \" + iter, function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.collectionVariables.unset('token-user')"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "{{token-user}}",
+								"description": "JSON Web Token yang didapat dari endpoint LOGIN",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "jumlah_bulan",
+									"value": "{{jumlah-bulan}}",
+									"type": "text"
+								}
+							],
+							"options": {
+								"urlencoded": {}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/user/getPremium",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"getPremium"
+							]
+						},
+						"description": "Endpoint untuk melakukan get premium (langganan premium)\r\n\r\nParameter: \r\n+ Header (x-auth-token): token autentikasi user\r\n+ jumlah_bulan : Required. lama waktu langganan premium dalam hitungan bulan\r\n\r\nResponse:\r\n+ message : berhasil atau tidaknya melakukan get premium\r\n+ user : detail user yang melakukan get premium beserta exp_date yang baru"
+					},
+					"response": [
+						{
+							"name": "PREMIUM - perpanjangan",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-auth-token",
+										"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbF91c2VyIjoiZW1haWxAZW1haWwuY29tIiwiaWF0IjoxNTkwNDgxNzg5LCJleHAiOjE1OTA1NjgxODl9.1QwI5Dij1_2UkcGoubwihSn0m4JVtOKLxqbKtfVfqpM",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "jumlah_bulan",
+											"value": "1",
+											"type": "text"
+										}
+									],
+									"options": {
+										"urlencoded": {}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/api/user/getPremium",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"user",
+										"getPremium"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Cowboy"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "161"
+								},
+								{
+									"key": "Etag",
+									"value": "W/\"a1-giBRZ6aZfhfM/+kf39ISyQE1Aho\""
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 26 May 2020 08:31:49 GMT"
+								},
+								{
+									"key": "Via",
+									"value": "1.1 vegur"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 200,\n    \"message\": \"Berhasil perpanjang langganan\",\n    \"user\": {\n        \"email_user\": \"email@email.com\",\n        \"nama_user\": \"User Nama\",\n        \"exp_premium\": \"2020-07-26T08:31:29.038Z\"\n    }\n}"
+						},
+						{
+							"name": "PREMIUM - daftar pertama kali",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-auth-token",
+										"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbF91c2VyIjoiZW1haWxAZW1haWwuY29tIiwiaWF0IjoxNTkwNDgxNzg5LCJleHAiOjE1OTA1NjgxODl9.1QwI5Dij1_2UkcGoubwihSn0m4JVtOKLxqbKtfVfqpM",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "jumlah_bulan",
+											"value": "1",
+											"type": "text"
+										}
+									],
+									"options": {
+										"urlencoded": {}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/api/user/getPremium",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"user",
+										"getPremium"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Cowboy"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "155"
+								},
+								{
+									"key": "Etag",
+									"value": "W/\"9b-cr3aEyHVfeTe80RXYyRDszYqof4\""
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 26 May 2020 08:31:29 GMT"
+								},
+								{
+									"key": "Via",
+									"value": "1.1 vegur"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 200,\n    \"message\": \"Berhasil daftar premium\",\n    \"user\": {\n        \"email_user\": \"email@email.com\",\n        \"nama_user\": \"User Nama\",\n        \"exp_premium\": \"2020-06-26T08:31:29.038Z\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "GET",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "533888b7-3094-48a3-8704-57d36277c68c",
+								"exec": [
+									"let current_iter = parseInt(pm.collectionVariables.get('getuserdetail-iter'));\r",
+									"if (!current_iter) current_iter = 1;\r",
+									"\r",
+									"switch(current_iter){\r",
+									"    case 1: \r",
+									"    console.log('masuk get iter 1')\r",
+									"    pm.variables.set('token-user', pm.collectionVariables.get('user-regular-login-token'))\r",
+									"    console.log(pm.variables.get('token-user'))\r",
+									"    break;\r",
+									"    case 2: \r",
+									"    console.log('masuk get iter 2')\r",
+									"    pm.variables.set('token-user', pm.collectionVariables.get('user-premium-login-token'))\r",
+									"    console.log(pm.variables.get('token-user'))\r",
+									"    \r",
+									"    break;\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "eacf67ba-393b-47b1-84ec-57eeb7342f58",
+								"exec": [
+									"let current_iter = parseInt(pm.collectionVariables.get('getuserdetail-iter'));\r",
+									"if (!current_iter) current_iter = 1;\r",
+									"\r",
+									"switch(current_iter){\r",
+									"    case 1: \r",
+									"    pm.collectionVariables.set('getuserdetail-iter', current_iter+1);\r",
+									"    pm.test(\"GET user regular\", function () {\r",
+									"        pm.response.to.have.status(200);\r",
+									"    });\r",
+									"    pm.collectionVariables.set('getuserdetail-iter', current_iter+1)\r",
+									"    postman.setNextRequest('GET');\r",
+									"    break;\r",
+									"\r",
+									"    case 2: \r",
+									"    pm.collectionVariables.set('getuserdetail-iter', current_iter+1);\r",
+									"    pm.test(\"GET user premium\", function () {\r",
+									"        pm.response.to.have.status(200);\r",
+									"    });\r",
+									"    break;\r",
+									"}\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "{{token-user}}",
+								"description": "JSON Web Token yang didapat dari endpoint LOGIN",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/api/user",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"user"
+							]
+						},
+						"description": "Endpoint untuk mendapatkan detail user\r\n\r\n\r\nParameter: \r\n+ Header (x-auth-token): token autentikasi user\r\n\r\nResponse:\r\n+ User : detail dari user yang sedang login\r\n+ playlist : detail playlist yang telah dibuat oleh user"
+					},
+					"response": [
+						{
+							"name": "GET",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-auth-token",
+										"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbF91c2VyIjoiZW1haWxAZW1haWwuY29tIiwiaWF0IjoxNTkwNDgxNzg5LCJleHAiOjE1OTA1NjgxODl9.1QwI5Dij1_2UkcGoubwihSn0m4JVtOKLxqbKtfVfqpM",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/api/user",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"user"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Cowboy"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "1113"
+								},
+								{
+									"key": "Etag",
+									"value": "W/\"459-P/Wi/bUreqj6D1RxCotgqCpnYfo\""
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 26 May 2020 08:41:13 GMT"
+								},
+								{
+									"key": "Via",
+									"value": "1.1 vegur"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 200,\n    \"user\": {\n        \"email_user\": \"email@email.com\",\n        \"nama_user\": \"User Nama\",\n        \"exp_premium\": \"2020-07-26T08:31:29.038Z\",\n        \"image_path\": \"http://soa-spotify.herokuapp.com/uploads/ZW1haWxAZW.png\"\n    },\n    \"playlist\": [\n        {\n            \"id\": 1,\n            \"email_user\": \"email@email.com\",\n            \"nama_playlist\": \"Playlist 1\",\n            \"deskripsi_playlist\": \"Deskripsi Playlist 1\",\n            \"jenis_playlist\": 1,\n            \"jumlah_lagu\": 0,\n            \"createdAt\": \"2020-05-26T08:32:17.015Z\",\n            \"updatedAt\": \"2020-05-26T08:32:17.015Z\"\n        },\n        {\n            \"id\": 2,\n            \"email_user\": \"email@email.com\",\n            \"nama_playlist\": \"Playlist 2\",\n            \"deskripsi_playlist\": \"Deskripsi Playlist 2\",\n            \"jenis_playlist\": 1,\n            \"jumlah_lagu\": 0,\n            \"createdAt\": \"2020-05-26T08:32:22.743Z\",\n            \"updatedAt\": \"2020-05-26T08:32:22.743Z\"\n        },\n        {\n            \"id\": 3,\n            \"email_user\": \"email@email.com\",\n            \"nama_playlist\": \"Playlist 3\",\n            \"deskripsi_playlist\": \"Deskripsi Playlist 3\",\n            \"jenis_playlist\": 1,\n            \"jumlah_lagu\": 0,\n            \"createdAt\": \"2020-05-26T08:32:27.201Z\",\n            \"updatedAt\": \"2020-05-26T08:32:27.201Z\"\n        },\n        {\n            \"id\": 7,\n            \"email_user\": \"email@email.com\",\n            \"nama_playlist\": \"Playlist Baru\",\n            \"deskripsi_playlist\": \"Deskripsi playlist baru\",\n            \"jenis_playlist\": 1,\n            \"jumlah_lagu\": 0,\n            \"createdAt\": \"2020-05-26T08:40:55.056Z\",\n            \"updatedAt\": \"2020-05-26T08:40:55.056Z\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "UPDATE",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "14cf2174-66ac-4e94-8692-3ae5519df784",
+								"exec": [
+									"let iter = parseInt(pm.collectionVariables.get('update-iter'));\r",
+									"if (!iter) iter = 1;\r",
+									"\r",
+									"switch(iter){\r",
+									"    case 1: //coba update user regular\r",
+									"        pm.variables.set('token-user', pm.collectionVariables.get('user-regular-login-token'));\r",
+									"        pm.variables.set('current-password', pm.collectionVariables.get('password_regular'));\r",
+									"        pm.variables.set('current-nama', pm.collectionVariables.get('after_update_regular'));\r",
+									"    break;\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "29de3fc8-7ac9-402d-8c84-011447b6095d",
+								"exec": [
+									"let iter = parseInt(pm.collectionVariables.get('update-iter'));\r",
+									"if (!iter) iter = 1;\r",
+									"\r",
+									"switch (iter){\r",
+									"    case 1:\r",
+									"    pm.test(\"Update detail user regular\", function () {\r",
+									"        pm.response.to.have.status(200);\r",
+									"    });\r",
+									"    \r",
+									"    pm.test(\"Cek detail setelah diupdate\", function () {\r",
+									"        var jsonData = pm.response.json();\r",
+									"        pm.expect(jsonData.user.nama_user).to.eql('User Biasa');\r",
+									"        pm.expect(jsonData.user.email_user).to.eql('regular@email.com');\r",
+									"    });\r",
+									"    pm.collectionVariables.set('update-iter', iter + 1);\r",
+									"    break;\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"description": "JSON Web Token yang didapat dari endpoint LOGIN",
+								"key": "x-auth-token",
+								"type": "text",
+								"value": "{{token-user}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "password_user",
+									"value": "{{current-password}}",
+									"type": "text"
+								},
+								{
+									"key": "nama_user",
+									"value": "{{current-nama}}",
+									"type": "text"
+								},
+								{
+									"key": "img",
+									"description": "file gambar",
+									"type": "file",
+									"src": "partner_ills_full_201.png"
+								}
+							],
+							"options": {
+								"formdata": {}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/user",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"user"
+							]
+						},
+						"description": "Endpoint untuk mengganti detail user.  \r\nParameter: \r\n+ header (x-auth-token) untuk autentikasi user\r\n+ password_user: password baru\r\n+ nama_user: nama baru\r\n+ img: file gambar untuk profile picture user yang baru\r\n\r\nResponse: \r\n+ message: pesan gagal atau sukses\r\n+ user: detail user yang telah diupdate, minus password"
+					},
+					"response": [
+						{
+							"name": "UPDATE - tidak ada data yang dikirim",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "x-auth-token",
+										"type": "text",
+										"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbF91c2VyIjoiZW1haWxAZW1haWwuY29tIiwiaWF0IjoxNTkwNDc4MzUyLCJleHAiOjE1OTA1NjQ3NTJ9.BScakWF8Euxz44T38X6vR0zfRCrljMKmuQZXwD-a_EA"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "password_user",
+											"value": "passwordbaru",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "nama_user",
+											"value": "namabaru",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "img",
+											"type": "file",
+											"src": "/D:/downloads/FULL IMAGE/partner_ills_full_201.png",
+											"disabled": true
+										}
+									],
+									"options": {
+										"urlencoded": {}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/api/user",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"user"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Cowboy"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "55"
+								},
+								{
+									"key": "Etag",
+									"value": "W/\"37-eGw34naH6+Jw/5kKwxi4D3QVsnI\""
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 26 May 2020 07:36:33 GMT"
+								},
+								{
+									"key": "Via",
+									"value": "1.1 vegur"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 400,\n    \"message\": \"Tidak ada data yang diupdate\"\n}"
+						},
+						{
+							"name": "UPDATE - berhasil",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "x-auth-token",
+										"type": "text",
+										"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbF91c2VyIjoiZW1haWxAZW1haWwuY29tIiwiaWF0IjoxNTkwNDc4MzUyLCJleHAiOjE1OTA1NjQ3NTJ9.BScakWF8Euxz44T38X6vR0zfRCrljMKmuQZXwD-a_EA"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "password_user",
+											"value": "",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "nama_user",
+											"value": "User Nama",
+											"type": "text"
+										},
+										{
+											"key": "img",
+											"type": "file",
+											"src": "/D:/downloads/FULL IMAGE/partner_ills_full_201.png"
+										}
+									],
+									"options": {
+										"urlencoded": {}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/api/user",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"user"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Cowboy"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "130"
+								},
+								{
+									"key": "Etag",
+									"value": "W/\"82-Hk5GNnkaX6y1JHOfxR+qpBFgR6s\""
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 26 May 2020 07:37:28 GMT"
+								},
+								{
+									"key": "Via",
+									"value": "1.1 vegur"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 200,\n    \"message\": \"Berhasil update user\",\n    \"user\": {\n        \"email_user\": \"email@email.com\",\n        \"nama_user\": \"User Nama\",\n        \"exp_premium\": null\n    }\n}"
+						},
+						{
+							"name": "UPDATE - tanpa token",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "x-auth-token",
+										"type": "text",
+										"value": "",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "password_user",
+											"value": "pass",
+											"type": "text"
+										},
+										{
+											"key": "nama_user",
+											"value": "nama  baru",
+											"type": "text"
+										}
+									],
+									"options": {
+										"urlencoded": {}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/api/user",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"user"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "47"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"2f-pu97Lma/L/59zKdWgX3BUFlKAfs\""
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 25 May 2020 04:27:14 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 400,\n    \"message\": \"jwt must be provided\"\n}"
+						}
+					]
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "SONG RESOURCES",
+			"item": [
+				{
+					"name": "GET multiple song",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "34c16ac5-1756-49ba-ad37-fcd0c86ead28",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Kembalian berupa array\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.data.length > 0).to.eql(true)\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/songs?page=1&market=ID",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"songs"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Optional parameter. Paging, 1-5"
+								},
+								{
+									"key": "market",
+									"value": "ID",
+									"description": "Optional parameter. Song market, ISO 3166-1 alpha-2 country codes https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements"
+								}
+							]
+						},
+						"description": "Endpoint untuk mendapatkan beberapa lagu terbaru.  \r\nMengakses Spotify Web API.  \r\n\r\nParameter: \r\n+ page: Opsional, integer 1-5  \r\n+ market: Opsional, ISO 3166-1 alpha-2 country codes\r\n\r\nResponse: \r\n+ page: indikator paging\r\n+ data: kumpulan lagu yang didapat dari Spotify Web API."
+					},
+					"response": [
+						{
+							"name": "GET recent",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/api/songs",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"songs"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1",
+											"disabled": true
+										},
+										{
+											"key": "market",
+											"value": "ID",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "39707"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"9b1b-vh4MtHXlDTMI3sE4aYlgsiwREeo\""
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 21 May 2020 05:09:00 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"page\": 1,\n    \"data\": [\n        {\n            \"id\": \"6QeUzTuBoasiii8nevDciq\",\n            \"title\": \"Trapped In The Sun\",\n            \"uri\": \"spotify:track:6QeUzTuBoasiii8nevDciq\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/6QeUzTuBoasiii8nevDciq\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/6QeUzTuBoasiii8nevDciq\"\n        },\n        {\n            \"id\": \"5v1STk4ZTTDrhgCs6LD3nd\",\n            \"title\": \"HiTek Tek\",\n            \"uri\": \"spotify:track:5v1STk4ZTTDrhgCs6LD3nd\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/5v1STk4ZTTDrhgCs6LD3nd\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/5v1STk4ZTTDrhgCs6LD3nd\"\n        },\n        {\n            \"id\": \"29s4u1adFGLWtGehbR5xkq\",\n            \"title\": \"Touch The Sky\",\n            \"uri\": \"spotify:track:29s4u1adFGLWtGehbR5xkq\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/29s4u1adFGLWtGehbR5xkq\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/29s4u1adFGLWtGehbR5xkq\"\n        },\n        {\n            \"id\": \"4kfeRwpq5KUaqTkgi4TbDF\",\n            \"title\": \"Solitaires (feat. Travis Scott)\",\n            \"uri\": \"spotify:track:4kfeRwpq5KUaqTkgi4TbDF\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/4kfeRwpq5KUaqTkgi4TbDF\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/4kfeRwpq5KUaqTkgi4TbDF\"\n        },\n        {\n            \"id\": \"6PHbWsTTlmQKF9i9VC1KFv\",\n            \"title\": \"Ridin Strikers\",\n            \"uri\": \"spotify:track:6PHbWsTTlmQKF9i9VC1KFv\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/6PHbWsTTlmQKF9i9VC1KFv\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/6PHbWsTTlmQKF9i9VC1KFv\"\n        },\n        {\n            \"id\": \"12ZpiGAd2uPgJiofgoZMue\",\n            \"title\": \"One Of My\",\n            \"uri\": \"spotify:track:12ZpiGAd2uPgJiofgoZMue\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/12ZpiGAd2uPgJiofgoZMue\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/12ZpiGAd2uPgJiofgoZMue\"\n        },\n        {\n            \"id\": \"7enaBBJnekyUCcXRuwGEH6\",\n            \"title\": \"Posted With Demons\",\n            \"uri\": \"spotify:track:7enaBBJnekyUCcXRuwGEH6\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/7enaBBJnekyUCcXRuwGEH6\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/7enaBBJnekyUCcXRuwGEH6\"\n        },\n        {\n            \"id\": \"66z5CuZkqkb18VhFTRwbZk\",\n            \"title\": \"Hard To Choose One\",\n            \"uri\": \"spotify:track:66z5CuZkqkb18VhFTRwbZk\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/66z5CuZkqkb18VhFTRwbZk\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/66z5CuZkqkb18VhFTRwbZk\"\n        },\n        {\n            \"id\": \"740kQ8xwSGloumdiKR5Cwz\",\n            \"title\": \"Trillionaire (feat. Youngboy Never Broke Again)\",\n            \"uri\": \"spotify:track:740kQ8xwSGloumdiKR5Cwz\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/740kQ8xwSGloumdiKR5Cwz\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/740kQ8xwSGloumdiKR5Cwz\"\n        },\n        {\n            \"id\": \"3cFHCXuBZKMJd8Q4Wt8RB3\",\n            \"title\": \"Harlem Shake (feat. Young Thug)\",\n            \"uri\": \"spotify:track:3cFHCXuBZKMJd8Q4Wt8RB3\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/3cFHCXuBZKMJd8Q4Wt8RB3\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/3cFHCXuBZKMJd8Q4Wt8RB3\"\n        },\n        {\n            \"id\": \"5i8AHhRU9tfp8c3drQetaa\",\n            \"title\": \"Up the River\",\n            \"uri\": \"spotify:track:5i8AHhRU9tfp8c3drQetaa\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/5i8AHhRU9tfp8c3drQetaa\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/5i8AHhRU9tfp8c3drQetaa\"\n        },\n        {\n            \"id\": \"5D2M4HrTJjrksPGDOKa3tY\",\n            \"title\": \"Pray For A Key\",\n            \"uri\": \"spotify:track:5D2M4HrTJjrksPGDOKa3tY\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/5D2M4HrTJjrksPGDOKa3tY\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/5D2M4HrTJjrksPGDOKa3tY\"\n        },\n        {\n            \"id\": \"0biVzpdI2z0vAxwfU9xuuA\",\n            \"title\": \"Too Comfortable\",\n            \"uri\": \"spotify:track:0biVzpdI2z0vAxwfU9xuuA\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/0biVzpdI2z0vAxwfU9xuuA\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/0biVzpdI2z0vAxwfU9xuuA\"\n        },\n        {\n            \"id\": \"021lWIHJrURZrmvYQ1xcM8\",\n            \"title\": \"All Bad (feat. Lil Uzi Vert)\",\n            \"uri\": \"spotify:track:021lWIHJrURZrmvYQ1xcM8\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/021lWIHJrURZrmvYQ1xcM8\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/021lWIHJrURZrmvYQ1xcM8\"\n        },\n        {\n            \"id\": \"6b3i6FDLfhuB3OB8zeANrH\",\n            \"title\": \"Outer Space Bih\",\n            \"uri\": \"spotify:track:6b3i6FDLfhuB3OB8zeANrH\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/6b3i6FDLfhuB3OB8zeANrH\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/6b3i6FDLfhuB3OB8zeANrH\"\n        },\n        {\n            \"id\": \"6n6CmyLTCIXJCPZnv7h2rn\",\n            \"title\": \"Accepting My Flaws\",\n            \"uri\": \"spotify:track:6n6CmyLTCIXJCPZnv7h2rn\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/6n6CmyLTCIXJCPZnv7h2rn\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/6n6CmyLTCIXJCPZnv7h2rn\"\n        },\n        {\n            \"id\": \"1K5KBOgreBi5fkEHvg5ap3\",\n            \"title\": \"Life Is Good (feat. Drake)\",\n            \"uri\": \"spotify:track:1K5KBOgreBi5fkEHvg5ap3\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/1K5KBOgreBi5fkEHvg5ap3\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/1K5KBOgreBi5fkEHvg5ap3\"\n        },\n        {\n            \"id\": \"1Sm3NRIXjCqYWSi8NlV8fd\",\n            \"title\": \"Last Name (feat. Lil Durk)\",\n            \"uri\": \"spotify:track:1Sm3NRIXjCqYWSi8NlV8fd\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/1Sm3NRIXjCqYWSi8NlV8fd\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/1Sm3NRIXjCqYWSi8NlV8fd\"\n        },\n        {\n            \"id\": \"05TpY5Fov3Hgfp8V1KILZ8\",\n            \"title\": \"Tycoon\",\n            \"uri\": \"spotify:track:05TpY5Fov3Hgfp8V1KILZ8\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/05TpY5Fov3Hgfp8V1KILZ8\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/05TpY5Fov3Hgfp8V1KILZ8\"\n        },\n        {\n            \"id\": \"3Uoy2lrZdhocMWO0jIdjAp\",\n            \"title\": \"100 Shooters (feat. Meek Mill & Doe Boy)\",\n            \"uri\": \"spotify:track:3Uoy2lrZdhocMWO0jIdjAp\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/3Uoy2lrZdhocMWO0jIdjAp\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/3Uoy2lrZdhocMWO0jIdjAp\"\n        },\n        {\n            \"id\": \"4Qd0pa3JO76UEwhos9JmN0\",\n            \"title\": \"Life Is Good (feat. Drake, DaBaby & Lil Baby) - Remix\",\n            \"uri\": \"spotify:track:4Qd0pa3JO76UEwhos9JmN0\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/4Qd0pa3JO76UEwhos9JmN0\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/4Qd0pa3JO76UEwhos9JmN0\"\n        },\n        {\n            \"id\": \"7xbWAw3LMgRMn4omR5yVn3\",\n            \"title\": \"Lose Somebody\",\n            \"uri\": \"spotify:track:7xbWAw3LMgRMn4omR5yVn3\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/7xbWAw3LMgRMn4omR5yVn3\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/7xbWAw3LMgRMn4omR5yVn3\"\n        },\n        {\n            \"id\": \"6RE0waxUF2FpqFmcUlJI1O\",\n            \"title\": \"I Can Hardly Speak\",\n            \"uri\": \"spotify:track:6RE0waxUF2FpqFmcUlJI1O\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/6RE0waxUF2FpqFmcUlJI1O\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/6RE0waxUF2FpqFmcUlJI1O\"\n        },\n        {\n            \"id\": \"4Nh0VN6kYKzcZHBwXWtZDD\",\n            \"title\": \"Lose You To Love Me\",\n            \"uri\": \"spotify:track:4Nh0VN6kYKzcZHBwXWtZDD\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/4Nh0VN6kYKzcZHBwXWtZDD\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/4Nh0VN6kYKzcZHBwXWtZDD\"\n        },\n        {\n            \"id\": \"7l7SKt5BsDiiS6CjtaW1fO\",\n            \"title\": \"Summer Feelings (feat. Charlie Puth)\",\n            \"uri\": \"spotify:track:7l7SKt5BsDiiS6CjtaW1fO\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/7l7SKt5BsDiiS6CjtaW1fO\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/7l7SKt5BsDiiS6CjtaW1fO\"\n        },\n        {\n            \"id\": \"7k6tAZp4m93oswrPqSfBbc\",\n            \"title\": \"On Me (feat. Ava Max)\",\n            \"uri\": \"spotify:track:7k6tAZp4m93oswrPqSfBbc\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/7k6tAZp4m93oswrPqSfBbc\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/7k6tAZp4m93oswrPqSfBbc\"\n        },\n        {\n            \"id\": \"78Bm5b2vJuegmhaBrWFsl9\",\n            \"title\": \"Back Up Plan\",\n            \"uri\": \"spotify:track:78Bm5b2vJuegmhaBrWFsl9\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/78Bm5b2vJuegmhaBrWFsl9\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/78Bm5b2vJuegmhaBrWFsl9\"\n        },\n        {\n            \"id\": \"7hZz5cBx3WQecIcxlQpqAe\",\n            \"title\": \"I Like It\",\n            \"uri\": \"spotify:track:7hZz5cBx3WQecIcxlQpqAe\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/7hZz5cBx3WQecIcxlQpqAe\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/7hZz5cBx3WQecIcxlQpqAe\"\n        },\n        {\n            \"id\": \"1cvdQqh8G8ChlTKHidVo2j\",\n            \"title\": \"Yikes\",\n            \"uri\": \"spotify:track:1cvdQqh8G8ChlTKHidVo2j\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/1cvdQqh8G8ChlTKHidVo2j\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/1cvdQqh8G8ChlTKHidVo2j\"\n        },\n        {\n            \"id\": \"5km3P1XyhHBednt9vS06Il\",\n            \"title\": \"My Little Alien\",\n            \"uri\": \"spotify:track:5km3P1XyhHBednt9vS06Il\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/5km3P1XyhHBednt9vS06Il\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/5km3P1XyhHBednt9vS06Il\"\n        },\n        {\n            \"id\": \"6BaPKXyFeolh5X3oqZGs48\",\n            \"title\": \"Homies\",\n            \"uri\": \"spotify:track:6BaPKXyFeolh5X3oqZGs48\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/6BaPKXyFeolh5X3oqZGs48\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/6BaPKXyFeolh5X3oqZGs48\"\n        },\n        {\n            \"id\": \"35fXdkEBkofjWnSzWED3DU\",\n            \"title\": \"I Fly (feat. Faouzia)\",\n            \"uri\": \"spotify:track:35fXdkEBkofjWnSzWED3DU\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/35fXdkEBkofjWnSzWED3DU\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/35fXdkEBkofjWnSzWED3DU\"\n        },\n        {\n            \"id\": \"3YkjO4AGex0WdxDansILAy\",\n            \"title\": \"Feel Alive (feat. A R I Z O N A)\",\n            \"uri\": \"spotify:track:3YkjO4AGex0WdxDansILAy\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/3YkjO4AGex0WdxDansILAy\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/3YkjO4AGex0WdxDansILAy\"\n        },\n        {\n            \"id\": \"16SmeUUNOaUTVjFFka3av1\",\n            \"title\": \"Tick Tick Boom (feat. BygTwo3)\",\n            \"uri\": \"spotify:track:16SmeUUNOaUTVjFFka3av1\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/16SmeUUNOaUTVjFFka3av1\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/16SmeUUNOaUTVjFFka3av1\"\n        },\n        {\n            \"id\": \"5PJhg3s0RC1bPyChQz6xij\",\n            \"title\": \"25 Hours\",\n            \"uri\": \"spotify:track:5PJhg3s0RC1bPyChQz6xij\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/5PJhg3s0RC1bPyChQz6xij\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/5PJhg3s0RC1bPyChQz6xij\"\n        },\n        {\n            \"id\": \"0g8MfCzZoj5nprV25TbPax\",\n            \"title\": \"Scooby Doo Theme Song\",\n            \"uri\": \"spotify:track:0g8MfCzZoj5nprV25TbPax\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/0g8MfCzZoj5nprV25TbPax\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/0g8MfCzZoj5nprV25TbPax\"\n        },\n        {\n            \"id\": \"4uqh9bualXNHXXwO2wPorc\",\n            \"title\": \"Daisies\",\n            \"uri\": \"spotify:track:4uqh9bualXNHXXwO2wPorc\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/4uqh9bualXNHXXwO2wPorc\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/4uqh9bualXNHXXwO2wPorc\"\n        },\n        {\n            \"id\": \"3TciLI5wo7RddPtAFhiU9V\",\n            \"title\": \"Don't Believe The Hype\",\n            \"uri\": \"spotify:track:3TciLI5wo7RddPtAFhiU9V\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/3TciLI5wo7RddPtAFhiU9V\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/3TciLI5wo7RddPtAFhiU9V\"\n        },\n        {\n            \"id\": \"2iP3unJbxZvRuqyrS0ocZy\",\n            \"title\": \"Heartless (feat. Mustard)\",\n            \"uri\": \"spotify:track:2iP3unJbxZvRuqyrS0ocZy\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/2iP3unJbxZvRuqyrS0ocZy\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/2iP3unJbxZvRuqyrS0ocZy\"\n        },\n        {\n            \"id\": \"1VLtjHwRWOVJiE5Py7JxoQ\",\n            \"title\": \"Martin & Gina\",\n            \"uri\": \"spotify:track:1VLtjHwRWOVJiE5Py7JxoQ\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/1VLtjHwRWOVJiE5Py7JxoQ\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/1VLtjHwRWOVJiE5Py7JxoQ\"\n        },\n        {\n            \"id\": \"2QqJTIlGKRLJC3onkavYEz\",\n            \"title\": \"Flex (feat. Juice WRLD)\",\n            \"uri\": \"spotify:track:2QqJTIlGKRLJC3onkavYEz\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/2QqJTIlGKRLJC3onkavYEz\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/2QqJTIlGKRLJC3onkavYEz\"\n        },\n        {\n            \"id\": \"4PklAHGXT5ityno3IA8SKd\",\n            \"title\": \"Go Stupid\",\n            \"uri\": \"spotify:track:4PklAHGXT5ityno3IA8SKd\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/4PklAHGXT5ityno3IA8SKd\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/4PklAHGXT5ityno3IA8SKd\"\n        },\n        {\n            \"id\": \"3JKgcAa7r07ocVWcV8bS0H\",\n            \"title\": \"21\",\n            \"uri\": \"spotify:track:3JKgcAa7r07ocVWcV8bS0H\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/3JKgcAa7r07ocVWcV8bS0H\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/3JKgcAa7r07ocVWcV8bS0H\"\n        },\n        {\n            \"id\": \"2iW6Hb6kfrz2K7EhPibFiq\",\n            \"title\": \"33\",\n            \"uri\": \"spotify:track:2iW6Hb6kfrz2K7EhPibFiq\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/2iW6Hb6kfrz2K7EhPibFiq\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/2iW6Hb6kfrz2K7EhPibFiq\"\n        },\n        {\n            \"id\": \"40j4RoqmLiivqzRObbQ4BF\",\n            \"title\": \"I Know\",\n            \"uri\": \"spotify:track:40j4RoqmLiivqzRObbQ4BF\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/40j4RoqmLiivqzRObbQ4BF\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/40j4RoqmLiivqzRObbQ4BF\"\n        },\n        {\n            \"id\": \"4SIB2yxKoFOrbkjA4zfQbB\",\n            \"title\": \"Beautiful Pain (Losin My Mind)\",\n            \"uri\": \"spotify:track:4SIB2yxKoFOrbkjA4zfQbB\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/4SIB2yxKoFOrbkjA4zfQbB\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/4SIB2yxKoFOrbkjA4zfQbB\"\n        },\n        {\n            \"id\": \"4dKe8YJZg545pXqWBksYIe\",\n            \"title\": \"No Matter What\",\n            \"uri\": \"spotify:track:4dKe8YJZg545pXqWBksYIe\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/4dKe8YJZg545pXqWBksYIe\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/4dKe8YJZg545pXqWBksYIe\"\n        },\n        {\n            \"id\": \"65jw6GhwQW3Db55PxlPEpS\",\n            \"title\": \"Be Something (feat. Lil Baby)\",\n            \"uri\": \"spotify:track:65jw6GhwQW3Db55PxlPEpS\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/65jw6GhwQW3Db55PxlPEpS\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/65jw6GhwQW3Db55PxlPEpS\"\n        },\n        {\n            \"id\": \"1F8yKtk5CQBptos4kM7aO7\",\n            \"title\": \"Relentless\",\n            \"uri\": \"spotify:track:1F8yKtk5CQBptos4kM7aO7\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/1F8yKtk5CQBptos4kM7aO7\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/1F8yKtk5CQBptos4kM7aO7\"\n        },\n        {\n            \"id\": \"58GJNfq2m0Qr5nIUCDbXVQ\",\n            \"title\": \"DND\",\n            \"uri\": \"spotify:track:58GJNfq2m0Qr5nIUCDbXVQ\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/58GJNfq2m0Qr5nIUCDbXVQ\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/58GJNfq2m0Qr5nIUCDbXVQ\"\n        },\n        {\n            \"id\": \"4XLCFFvRG1qQ8kT4uzwYZC\",\n            \"title\": \"Chinatown\",\n            \"uri\": \"spotify:track:4XLCFFvRG1qQ8kT4uzwYZC\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/4XLCFFvRG1qQ8kT4uzwYZC\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/4XLCFFvRG1qQ8kT4uzwYZC\"\n        },\n        {\n            \"id\": \"6V1Jx3o0S2MtBI9yIDXsJS\",\n            \"title\": \"Trials & Tribulations\",\n            \"uri\": \"spotify:track:6V1Jx3o0S2MtBI9yIDXsJS\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/6V1Jx3o0S2MtBI9yIDXsJS\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/6V1Jx3o0S2MtBI9yIDXsJS\"\n        },\n        {\n            \"id\": \"192RjH0gN6en7nE6ElN96T\",\n            \"title\": \"Wishing For A Hero (feat. BJ The Chicago Kid)\",\n            \"uri\": \"spotify:track:192RjH0gN6en7nE6ElN96T\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/192RjH0gN6en7nE6ElN96T\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/192RjH0gN6en7nE6ElN96T\"\n        },\n        {\n            \"id\": \"77fvnWALKJR0ws1VUx09CY\",\n            \"title\": \"X (with KAROL G)\",\n            \"uri\": \"spotify:track:77fvnWALKJR0ws1VUx09CY\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/77fvnWALKJR0ws1VUx09CY\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/77fvnWALKJR0ws1VUx09CY\"\n        },\n        {\n            \"id\": \"0WxSQtLMCLcsAOhliamv5W\",\n            \"title\": \"Five More Minutes\",\n            \"uri\": \"spotify:track:0WxSQtLMCLcsAOhliamv5W\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/0WxSQtLMCLcsAOhliamv5W\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/0WxSQtLMCLcsAOhliamv5W\"\n        },\n        {\n            \"id\": \"3V0PgcsUMlAGXwCD0084pY\",\n            \"title\": \"pink diamond\",\n            \"uri\": \"spotify:track:3V0PgcsUMlAGXwCD0084pY\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/3V0PgcsUMlAGXwCD0084pY\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/3V0PgcsUMlAGXwCD0084pY\"\n        },\n        {\n            \"id\": \"5GsJIVCBFjhCcUwJaTW2sB\",\n            \"title\": \"forever\",\n            \"uri\": \"spotify:track:5GsJIVCBFjhCcUwJaTW2sB\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/5GsJIVCBFjhCcUwJaTW2sB\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/5GsJIVCBFjhCcUwJaTW2sB\"\n        },\n        {\n            \"id\": \"7Dexi5Z2IowCkHrnzlWysc\",\n            \"title\": \"claws\",\n            \"uri\": \"spotify:track:7Dexi5Z2IowCkHrnzlWysc\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/7Dexi5Z2IowCkHrnzlWysc\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/7Dexi5Z2IowCkHrnzlWysc\"\n        },\n        {\n            \"id\": \"4jQDJPgw3qkc1T2f1safdy\",\n            \"title\": \"7 years\",\n            \"uri\": \"spotify:track:4jQDJPgw3qkc1T2f1safdy\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/4jQDJPgw3qkc1T2f1safdy\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/4jQDJPgw3qkc1T2f1safdy\"\n        },\n        {\n            \"id\": \"1M6VHCglQ2PLWeAsyhgEUH\",\n            \"title\": \"detonate\",\n            \"uri\": \"spotify:track:1M6VHCglQ2PLWeAsyhgEUH\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/1M6VHCglQ2PLWeAsyhgEUH\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/1M6VHCglQ2PLWeAsyhgEUH\"\n        },\n        {\n            \"id\": \"51qNCY0lUymE88LPDUqFXd\",\n            \"title\": \"enemy\",\n            \"uri\": \"spotify:track:51qNCY0lUymE88LPDUqFXd\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/51qNCY0lUymE88LPDUqFXd\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/51qNCY0lUymE88LPDUqFXd\"\n        },\n        {\n            \"id\": \"2PBcNVg8jB1e5kVkjXJyZ5\",\n            \"title\": \"i finally understand\",\n            \"uri\": \"spotify:track:2PBcNVg8jB1e5kVkjXJyZ5\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/2PBcNVg8jB1e5kVkjXJyZ5\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/2PBcNVg8jB1e5kVkjXJyZ5\"\n        },\n        {\n            \"id\": \"5gNTRfMRPZg1U07j7KSSaG\",\n            \"title\": \"c2.0\",\n            \"uri\": \"spotify:track:5gNTRfMRPZg1U07j7KSSaG\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/5gNTRfMRPZg1U07j7KSSaG\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/5gNTRfMRPZg1U07j7KSSaG\"\n        },\n        {\n            \"id\": \"2RdEC8Ff83WkX7kDVCHseE\",\n            \"title\": \"party 4 u\",\n            \"uri\": \"spotify:track:2RdEC8Ff83WkX7kDVCHseE\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/2RdEC8Ff83WkX7kDVCHseE\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/2RdEC8Ff83WkX7kDVCHseE\"\n        },\n        {\n            \"id\": \"2ljvO8ZpKFMT3HXwCjW4Yw\",\n            \"title\": \"anthems\",\n            \"uri\": \"spotify:track:2ljvO8ZpKFMT3HXwCjW4Yw\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/2ljvO8ZpKFMT3HXwCjW4Yw\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/2ljvO8ZpKFMT3HXwCjW4Yw\"\n        },\n        {\n            \"id\": \"5oZIhePTCzvWskktjYgdjr\",\n            \"title\": \"visions\",\n            \"uri\": \"spotify:track:5oZIhePTCzvWskktjYgdjr\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/5oZIhePTCzvWskktjYgdjr\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/5oZIhePTCzvWskktjYgdjr\"\n        },\n        {\n            \"id\": \"1FKFLWFa7fVoftc7UmYhDC\",\n            \"title\": \"Temperature Rising\",\n            \"uri\": \"spotify:track:1FKFLWFa7fVoftc7UmYhDC\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/1FKFLWFa7fVoftc7UmYhDC\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/1FKFLWFa7fVoftc7UmYhDC\"\n        },\n        {\n            \"id\": \"2GCt4EYq76bDtuOyYxC2AD\",\n            \"title\": \"Whole Life\",\n            \"uri\": \"spotify:track:2GCt4EYq76bDtuOyYxC2AD\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/2GCt4EYq76bDtuOyYxC2AD\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/2GCt4EYq76bDtuOyYxC2AD\"\n        },\n        {\n            \"id\": \"121zris91UHhwFUBdgjCXd\",\n            \"title\": \"Describe\",\n            \"uri\": \"spotify:track:121zris91UHhwFUBdgjCXd\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/121zris91UHhwFUBdgjCXd\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/121zris91UHhwFUBdgjCXd\"\n        },\n        {\n            \"id\": \"2SPxgEush9C8GS5RqgXdqi\",\n            \"title\": \"Without You\",\n            \"uri\": \"spotify:track:2SPxgEush9C8GS5RqgXdqi\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/2SPxgEush9C8GS5RqgXdqi\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/2SPxgEush9C8GS5RqgXdqi\"\n        },\n        {\n            \"id\": \"4pCo0hx75daUKKkfi1XXOO\",\n            \"title\": \"Jason\",\n            \"uri\": \"spotify:track:4pCo0hx75daUKKkfi1XXOO\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/4pCo0hx75daUKKkfi1XXOO\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/4pCo0hx75daUKKkfi1XXOO\"\n        },\n        {\n            \"id\": \"1xV8YLm3fjOoduCyFH2n20\",\n            \"title\": \"Leave\",\n            \"uri\": \"spotify:track:1xV8YLm3fjOoduCyFH2n20\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/1xV8YLm3fjOoduCyFH2n20\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/1xV8YLm3fjOoduCyFH2n20\"\n        },\n        {\n            \"id\": \"4rpyJ4FCTawHW4ItDlpoka\",\n            \"title\": \"On the Floor\",\n            \"uri\": \"spotify:track:4rpyJ4FCTawHW4ItDlpoka\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/4rpyJ4FCTawHW4ItDlpoka\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/4rpyJ4FCTawHW4ItDlpoka\"\n        },\n        {\n            \"id\": \"0iG3mAyMzBJPelgMs5xUAj\",\n            \"title\": \"Your Body Changes Everything\",\n            \"uri\": \"spotify:track:0iG3mAyMzBJPelgMs5xUAj\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/0iG3mAyMzBJPelgMs5xUAj\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/0iG3mAyMzBJPelgMs5xUAj\"\n        },\n        {\n            \"id\": \"7D8Zhn0cJyPHFPs7sFdfgQ\",\n            \"title\": \"Moonbend\",\n            \"uri\": \"spotify:track:7D8Zhn0cJyPHFPs7sFdfgQ\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/7D8Zhn0cJyPHFPs7sFdfgQ\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/7D8Zhn0cJyPHFPs7sFdfgQ\"\n        },\n        {\n            \"id\": \"0fIptcK211kbrGTDn95L9S\",\n            \"title\": \"Just a Touch\",\n            \"uri\": \"spotify:track:0fIptcK211kbrGTDn95L9S\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/0fIptcK211kbrGTDn95L9S\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/0fIptcK211kbrGTDn95L9S\"\n        },\n        {\n            \"id\": \"7uSO76bQA3VYFAsfKoJmxs\",\n            \"title\": \"Nothing at All\",\n            \"uri\": \"spotify:track:7uSO76bQA3VYFAsfKoJmxs\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/7uSO76bQA3VYFAsfKoJmxs\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/7uSO76bQA3VYFAsfKoJmxs\"\n        },\n        {\n            \"id\": \"3aHdfgdvUN2cdDZYi56fhC\",\n            \"title\": \"One More Try\",\n            \"uri\": \"spotify:track:3aHdfgdvUN2cdDZYi56fhC\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/3aHdfgdvUN2cdDZYi56fhC\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/3aHdfgdvUN2cdDZYi56fhC\"\n        },\n        {\n            \"id\": \"0BdJ7mUt6EuX1DEZcOyqiJ\",\n            \"title\": \"Some Dream\",\n            \"uri\": \"spotify:track:0BdJ7mUt6EuX1DEZcOyqiJ\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/0BdJ7mUt6EuX1DEZcOyqiJ\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/0BdJ7mUt6EuX1DEZcOyqiJ\"\n        },\n        {\n            \"id\": \"1jWW0dZHjTIynczp7NsDAK\",\n            \"title\": \"Borrowed Light\",\n            \"uri\": \"spotify:track:1jWW0dZHjTIynczp7NsDAK\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/1jWW0dZHjTIynczp7NsDAK\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/1jWW0dZHjTIynczp7NsDAK\"\n        },\n        {\n            \"id\": \"5zKlUZrOViLs7W0L5o1gPp\",\n            \"title\": \"I'm Up\",\n            \"uri\": \"spotify:track:5zKlUZrOViLs7W0L5o1gPp\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/5zKlUZrOViLs7W0L5o1gPp\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/5zKlUZrOViLs7W0L5o1gPp\"\n        },\n        {\n            \"id\": \"1ofWNVjSh0pYkRFSsGmC3M\",\n            \"title\": \"Relax\",\n            \"uri\": \"spotify:track:1ofWNVjSh0pYkRFSsGmC3M\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/1ofWNVjSh0pYkRFSsGmC3M\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/1ofWNVjSh0pYkRFSsGmC3M\"\n        },\n        {\n            \"id\": \"0RT6sfjay47URb9i7ETFK4\",\n            \"title\": \"Chirp (feat. Quavo)\",\n            \"uri\": \"spotify:track:0RT6sfjay47URb9i7ETFK4\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/0RT6sfjay47URb9i7ETFK4\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/0RT6sfjay47URb9i7ETFK4\"\n        },\n        {\n            \"id\": \"7c7eMfeLk1wzH1XqUMklcr\",\n            \"title\": \"Frequently\",\n            \"uri\": \"spotify:track:7c7eMfeLk1wzH1XqUMklcr\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/7c7eMfeLk1wzH1XqUMklcr\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/7c7eMfeLk1wzH1XqUMklcr\"\n        },\n        {\n            \"id\": \"7BM6RahGI2U2CejVFdTY23\",\n            \"title\": \"Sprite Clean\",\n            \"uri\": \"spotify:track:7BM6RahGI2U2CejVFdTY23\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/7BM6RahGI2U2CejVFdTY23\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/7BM6RahGI2U2CejVFdTY23\"\n        },\n        {\n            \"id\": \"1Mwt2DaHmyIHIESfHOJMWu\",\n            \"title\": \"Free Santana (feat. Lil Duke)\",\n            \"uri\": \"spotify:track:1Mwt2DaHmyIHIESfHOJMWu\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/1Mwt2DaHmyIHIESfHOJMWu\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/1Mwt2DaHmyIHIESfHOJMWu\"\n        },\n        {\n            \"id\": \"3kaEdl52AHL0d1BYMghAde\",\n            \"title\": \"Heat\",\n            \"uri\": \"spotify:track:3kaEdl52AHL0d1BYMghAde\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/3kaEdl52AHL0d1BYMghAde\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/3kaEdl52AHL0d1BYMghAde\"\n        },\n        {\n            \"id\": \"0Hlgu5loP4S9iF3HOrQSMw\",\n            \"title\": \"No Time\",\n            \"uri\": \"spotify:track:0Hlgu5loP4S9iF3HOrQSMw\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/0Hlgu5loP4S9iF3HOrQSMw\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/0Hlgu5loP4S9iF3HOrQSMw\"\n        },\n        {\n            \"id\": \"2MFaWtVFHJ9KNdpArq0AGW\",\n            \"title\": \"Yessir\",\n            \"uri\": \"spotify:track:2MFaWtVFHJ9KNdpArq0AGW\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/2MFaWtVFHJ9KNdpArq0AGW\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/2MFaWtVFHJ9KNdpArq0AGW\"\n        },\n        {\n            \"id\": \"4IGqiXs939Hh4uK0DW3iLo\",\n            \"title\": \"Pine Soul\",\n            \"uri\": \"spotify:track:4IGqiXs939Hh4uK0DW3iLo\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/4IGqiXs939Hh4uK0DW3iLo\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/4IGqiXs939Hh4uK0DW3iLo\"\n        },\n        {\n            \"id\": \"67kmAZehpUrZFQpNa412pn\",\n            \"title\": \"Two Face\",\n            \"uri\": \"spotify:track:67kmAZehpUrZFQpNa412pn\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/67kmAZehpUrZFQpNa412pn\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/67kmAZehpUrZFQpNa412pn\"\n        },\n        {\n            \"id\": \"6R9N1mx8PabU29VE6G55D1\",\n            \"title\": \"Extra\",\n            \"uri\": \"spotify:track:6R9N1mx8PabU29VE6G55D1\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/6R9N1mx8PabU29VE6G55D1\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/6R9N1mx8PabU29VE6G55D1\"\n        },\n        {\n            \"id\": \"1DQTg7eCZJmq63TsJM8sEJ\",\n            \"title\": \"Ain't Goin Back\",\n            \"uri\": \"spotify:track:1DQTg7eCZJmq63TsJM8sEJ\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/1DQTg7eCZJmq63TsJM8sEJ\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/1DQTg7eCZJmq63TsJM8sEJ\"\n        },\n        {\n            \"id\": \"0zFuiliMFNQ36pO6oBrSzo\",\n            \"title\": \"Bag\",\n            \"uri\": \"spotify:track:0zFuiliMFNQ36pO6oBrSzo\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/0zFuiliMFNQ36pO6oBrSzo\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/0zFuiliMFNQ36pO6oBrSzo\"\n        },\n        {\n            \"id\": \"76Vq7DmloICFTMxgsRuec1\",\n            \"title\": \"Good Intentions (Intro)\",\n            \"uri\": \"spotify:track:76Vq7DmloICFTMxgsRuec1\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/76Vq7DmloICFTMxgsRuec1\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/76Vq7DmloICFTMxgsRuec1\"\n        },\n        {\n            \"id\": \"1oyHf2Z8I7wxOOBNkI9aQG\",\n            \"title\": \"No Debate (feat. Young Thug)\",\n            \"uri\": \"spotify:track:1oyHf2Z8I7wxOOBNkI9aQG\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/1oyHf2Z8I7wxOOBNkI9aQG\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/1oyHf2Z8I7wxOOBNkI9aQG\"\n        },\n        {\n            \"id\": \"50DtPsK4axb0F3ZjeMSIS6\",\n            \"title\": \"My Business (feat. Future)\",\n            \"uri\": \"spotify:track:50DtPsK4axb0F3ZjeMSIS6\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/50DtPsK4axb0F3ZjeMSIS6\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/50DtPsK4axb0F3ZjeMSIS6\"\n        },\n        {\n            \"id\": \"0P4SiTpHMr5thEKGtsGWqi\",\n            \"title\": \"Turks (with Gunna & ft. Travis Scott)\",\n            \"uri\": \"spotify:track:0P4SiTpHMr5thEKGtsGWqi\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/0P4SiTpHMr5thEKGtsGWqi\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/0P4SiTpHMr5thEKGtsGWqi\"\n        },\n        {\n            \"id\": \"73vjxsZLOjYoE4CaOXJKFz\",\n            \"title\": \"Brown Boy\",\n            \"uri\": \"spotify:track:73vjxsZLOjYoE4CaOXJKFz\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/73vjxsZLOjYoE4CaOXJKFz\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/73vjxsZLOjYoE4CaOXJKFz\"\n        },\n        {\n            \"id\": \"3i9kWYmrQNEC69zjhCUWs1\",\n            \"title\": \"Status (feat. Lil Uzi Vert)\",\n            \"uri\": \"spotify:track:3i9kWYmrQNEC69zjhCUWs1\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/3i9kWYmrQNEC69zjhCUWs1\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/3i9kWYmrQNEC69zjhCUWs1\"\n        },\n        {\n            \"id\": \"5gDWewYDUyOBivi1Dv9uSh\",\n            \"title\": \"Codeine (feat. Gunna)\",\n            \"uri\": \"spotify:track:5gDWewYDUyOBivi1Dv9uSh\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/5gDWewYDUyOBivi1Dv9uSh\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/5gDWewYDUyOBivi1Dv9uSh\"\n        },\n        {\n            \"id\": \"35W0dQfnQgztNeGkqxkbHc\",\n            \"title\": \"Saint Laurenttt\",\n            \"uri\": \"spotify:track:35W0dQfnQgztNeGkqxkbHc\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/35W0dQfnQgztNeGkqxkbHc\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/35W0dQfnQgztNeGkqxkbHc\"\n        },\n        {\n            \"id\": \"51nHOaM2VkI9qdmNgPyPI8\",\n            \"title\": \"Coast To Coast\",\n            \"uri\": \"spotify:track:51nHOaM2VkI9qdmNgPyPI8\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/51nHOaM2VkI9qdmNgPyPI8\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/51nHOaM2VkI9qdmNgPyPI8\"\n        },\n        {\n            \"id\": \"638LeZQzM5PUwruHZGbk8r\",\n            \"title\": \"Run It Up (feat. Pop Smoke)\",\n            \"uri\": \"spotify:track:638LeZQzM5PUwruHZGbk8r\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/638LeZQzM5PUwruHZGbk8r\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/638LeZQzM5PUwruHZGbk8r\"\n        },\n        {\n            \"id\": \"24IUnzR2D5TqEGCvecCDZ9\",\n            \"title\": \"Spend It (feat. Young Thug)\",\n            \"uri\": \"spotify:track:24IUnzR2D5TqEGCvecCDZ9\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/24IUnzR2D5TqEGCvecCDZ9\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/24IUnzR2D5TqEGCvecCDZ9\"\n        },\n        {\n            \"id\": \"03c2CdleygCCP3qPNKoGFV\",\n            \"title\": \"Recap (feat. Don Toliver)\",\n            \"uri\": \"spotify:track:03c2CdleygCCP3qPNKoGFV\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/03c2CdleygCCP3qPNKoGFV\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/03c2CdleygCCP3qPNKoGFV\"\n        },\n        {\n            \"id\": \"41KQFRkKorKn6IdPANJ564\",\n            \"title\": \"She Hurtin\",\n            \"uri\": \"spotify:track:41KQFRkKorKn6IdPANJ564\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/41KQFRkKorKn6IdPANJ564\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/41KQFRkKorKn6IdPANJ564\"\n        },\n        {\n            \"id\": \"7tsVXlBaEfqlXUIHYhuAvz\",\n            \"title\": \"Overdose\",\n            \"uri\": \"spotify:track:7tsVXlBaEfqlXUIHYhuAvz\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/7tsVXlBaEfqlXUIHYhuAvz\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/7tsVXlBaEfqlXUIHYhuAvz\"\n        },\n        {\n            \"id\": \"2KAGyOxskTnBZ1U0pk4qGb\",\n            \"title\": \"Did You Wrong\",\n            \"uri\": \"spotify:track:2KAGyOxskTnBZ1U0pk4qGb\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/2KAGyOxskTnBZ1U0pk4qGb\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/2KAGyOxskTnBZ1U0pk4qGb\"\n        },\n        {\n            \"id\": \"3gNZYJf4UgskUYFgyQ7GA3\",\n            \"title\": \"My Space\",\n            \"uri\": \"spotify:track:3gNZYJf4UgskUYFgyQ7GA3\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/3gNZYJf4UgskUYFgyQ7GA3\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/3gNZYJf4UgskUYFgyQ7GA3\"\n        },\n        {\n            \"id\": \"6dezeIKyedN1gf3RFOjbhK\",\n            \"title\": \"No Ice (feat. Lil Durk)\",\n            \"uri\": \"spotify:track:6dezeIKyedN1gf3RFOjbhK\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/6dezeIKyedN1gf3RFOjbhK\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/6dezeIKyedN1gf3RFOjbhK\"\n        },\n        {\n            \"id\": \"0dsmEUjKqG4Kn9Xx3500gm\",\n            \"title\": \"Proud Of Me?\",\n            \"uri\": \"spotify:track:0dsmEUjKqG4Kn9Xx3500gm\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/0dsmEUjKqG4Kn9Xx3500gm\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/0dsmEUjKqG4Kn9Xx3500gm\"\n        },\n        {\n            \"id\": \"568OIKgeHyGRD3uWR44JbO\",\n            \"title\": \"Racks 2 Skinny\",\n            \"uri\": \"spotify:track:568OIKgeHyGRD3uWR44JbO\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/568OIKgeHyGRD3uWR44JbO\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/568OIKgeHyGRD3uWR44JbO\"\n        },\n        {\n            \"id\": \"7EPvO8J95P2Qx5mWEVjW5s\",\n            \"title\": \"One Of Them Girls\",\n            \"uri\": \"spotify:track:7EPvO8J95P2Qx5mWEVjW5s\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/7EPvO8J95P2Qx5mWEVjW5s\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/7EPvO8J95P2Qx5mWEVjW5s\"\n        },\n        {\n            \"id\": \"6xGzozxqIkO1ofWerpXQC3\",\n            \"title\": \"Hey World\",\n            \"uri\": \"spotify:track:6xGzozxqIkO1ofWerpXQC3\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/6xGzozxqIkO1ofWerpXQC3\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/6xGzozxqIkO1ofWerpXQC3\"\n        },\n        {\n            \"id\": \"6mIrY9axk9DkBCk4eHXL6c\",\n            \"title\": \"God Is A Dancer\",\n            \"uri\": \"spotify:track:6mIrY9axk9DkBCk4eHXL6c\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/6mIrY9axk9DkBCk4eHXL6c\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/6mIrY9axk9DkBCk4eHXL6c\"\n        },\n        {\n            \"id\": \"39TATbzOKDwiWdrmuQBLGK\",\n            \"title\": \"Nothing Really Matters\",\n            \"uri\": \"spotify:track:39TATbzOKDwiWdrmuQBLGK\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/39TATbzOKDwiWdrmuQBLGK\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/39TATbzOKDwiWdrmuQBLGK\"\n        },\n        {\n            \"id\": \"6GpoUPegO1TBbZCoE7FxZ7\",\n            \"title\": \"Ride\",\n            \"uri\": \"spotify:track:6GpoUPegO1TBbZCoE7FxZ7\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/6GpoUPegO1TBbZCoE7FxZ7\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/6GpoUPegO1TBbZCoE7FxZ7\"\n        },\n        {\n            \"id\": \"0teJO13Uua0AamcZ681qOd\",\n            \"title\": \"Ritual\",\n            \"uri\": \"spotify:track:0teJO13Uua0AamcZ681qOd\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/0teJO13Uua0AamcZ681qOd\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/0teJO13Uua0AamcZ681qOd\"\n        },\n        {\n            \"id\": \"4vvnuJlgBeNVwq3TNmLMNX\",\n            \"title\": \"Jackie Chan\",\n            \"uri\": \"spotify:track:4vvnuJlgBeNVwq3TNmLMNX\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/4vvnuJlgBeNVwq3TNmLMNX\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/4vvnuJlgBeNVwq3TNmLMNX\"\n        },\n        {\n            \"id\": \"2etmWkDzfNe7wEsb1UaBrp\",\n            \"title\": \"Lifestyle\",\n            \"uri\": \"spotify:track:2etmWkDzfNe7wEsb1UaBrp\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/2etmWkDzfNe7wEsb1UaBrp\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/2etmWkDzfNe7wEsb1UaBrp\"\n        },\n        {\n            \"id\": \"05kyh6IkfisfWjZoVkHFTL\",\n            \"title\": \"On My California\",\n            \"uri\": \"spotify:track:05kyh6IkfisfWjZoVkHFTL\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/05kyh6IkfisfWjZoVkHFTL\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/05kyh6IkfisfWjZoVkHFTL\"\n        },\n        {\n            \"id\": \"2WRCwrRte5jmUQuLvlMTbe\",\n            \"title\": \"BLUE\",\n            \"uri\": \"spotify:track:2WRCwrRte5jmUQuLvlMTbe\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/2WRCwrRte5jmUQuLvlMTbe\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/2WRCwrRte5jmUQuLvlMTbe\"\n        },\n        {\n            \"id\": \"7ws2bj14L3aKw42CyBVpxm\",\n            \"title\": \"Round & Round\",\n            \"uri\": \"spotify:track:7ws2bj14L3aKw42CyBVpxm\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/7ws2bj14L3aKw42CyBVpxm\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/7ws2bj14L3aKw42CyBVpxm\"\n        },\n        {\n            \"id\": \"7sFk2PA3NsrrSsGa4CM3rs\",\n            \"title\": \"Lose You\",\n            \"uri\": \"spotify:track:7sFk2PA3NsrrSsGa4CM3rs\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/7sFk2PA3NsrrSsGa4CM3rs\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/7sFk2PA3NsrrSsGa4CM3rs\"\n        },\n        {\n            \"id\": \"5RAXb67yhAe5rw5Q9nSPUg\",\n            \"title\": \"Over You\",\n            \"uri\": \"spotify:track:5RAXb67yhAe5rw5Q9nSPUg\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/5RAXb67yhAe5rw5Q9nSPUg\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/5RAXb67yhAe5rw5Q9nSPUg\"\n        },\n        {\n            \"id\": \"74LTsGNEMUicvEWC4NExCR\",\n            \"title\": \"What’s It Gonna Be\",\n            \"uri\": \"spotify:track:74LTsGNEMUicvEWC4NExCR\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/74LTsGNEMUicvEWC4NExCR\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/74LTsGNEMUicvEWC4NExCR\"\n        },\n        {\n            \"id\": \"6uLyhMFTjb3xhmLXKykjTV\",\n            \"title\": \"Insomnia\",\n            \"uri\": \"spotify:track:6uLyhMFTjb3xhmLXKykjTV\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/6uLyhMFTjb3xhmLXKykjTV\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/6uLyhMFTjb3xhmLXKykjTV\"\n        },\n        {\n            \"id\": \"5uYPZeWlyembusguyS6Mg9\",\n            \"title\": \"You\",\n            \"uri\": \"spotify:track:5uYPZeWlyembusguyS6Mg9\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/5uYPZeWlyembusguyS6Mg9\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/5uYPZeWlyembusguyS6Mg9\"\n        },\n        {\n            \"id\": \"4DaR8M6Yj3XfZC6ixaRA4W\",\n            \"title\": \"Break. Up. Drunk.\",\n            \"uri\": \"spotify:track:4DaR8M6Yj3XfZC6ixaRA4W\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/4DaR8M6Yj3XfZC6ixaRA4W\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/4DaR8M6Yj3XfZC6ixaRA4W\"\n        },\n        {\n            \"id\": \"2LC1Bs6RrM04YaWsnvgnyd\",\n            \"title\": \"Down Home Runs Deep\",\n            \"uri\": \"spotify:track:2LC1Bs6RrM04YaWsnvgnyd\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/2LC1Bs6RrM04YaWsnvgnyd\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/2LC1Bs6RrM04YaWsnvgnyd\"\n        },\n        {\n            \"id\": \"6lKWBqnZflLagI5jaBf0OF\",\n            \"title\": \"Belong\",\n            \"uri\": \"spotify:track:6lKWBqnZflLagI5jaBf0OF\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/6lKWBqnZflLagI5jaBf0OF\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/6lKWBqnZflLagI5jaBf0OF\"\n        },\n        {\n            \"id\": \"28A7OtPOf870rmix5OEMiP\",\n            \"title\": \"House On Fire\",\n            \"uri\": \"spotify:track:28A7OtPOf870rmix5OEMiP\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/28A7OtPOf870rmix5OEMiP\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/28A7OtPOf870rmix5OEMiP\"\n        },\n        {\n            \"id\": \"13YKfODVMZi6Fo8uXzLFKO\",\n            \"title\": \"They Don't Want What We Want (And They Don't Care)\",\n            \"uri\": \"spotify:track:13YKfODVMZi6Fo8uXzLFKO\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/13YKfODVMZi6Fo8uXzLFKO\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/13YKfODVMZi6Fo8uXzLFKO\"\n        },\n        {\n            \"id\": \"3qKSl5qLMN1iBkUMmu32yX\",\n            \"title\": \"Down To Hell\",\n            \"uri\": \"spotify:track:3qKSl5qLMN1iBkUMmu32yX\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/3qKSl5qLMN1iBkUMmu32yX\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/3qKSl5qLMN1iBkUMmu32yX\"\n        },\n        {\n            \"id\": \"5Rb3OxCE0BAuDfgTr4awtF\",\n            \"title\": \"Antisocialist\",\n            \"uri\": \"spotify:track:5Rb3OxCE0BAuDfgTr4awtF\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/5Rb3OxCE0BAuDfgTr4awtF\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/5Rb3OxCE0BAuDfgTr4awtF\"\n        },\n        {\n            \"id\": \"7jbf5HTZGIORLBkJqueO5G\",\n            \"title\": \"I Don't Need You\",\n            \"uri\": \"spotify:track:7jbf5HTZGIORLBkJqueO5G\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/7jbf5HTZGIORLBkJqueO5G\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/7jbf5HTZGIORLBkJqueO5G\"\n        },\n        {\n            \"id\": \"3o1AV62nKlHYckK8Lb400G\",\n            \"title\": \"All Due Respect\",\n            \"uri\": \"spotify:track:3o1AV62nKlHYckK8Lb400G\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/3o1AV62nKlHYckK8Lb400G\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/3o1AV62nKlHYckK8Lb400G\"\n        },\n        {\n            \"id\": \"1aSrUZe9Qoqj6aupGUI2OG\",\n            \"title\": \"Take Some Time\",\n            \"uri\": \"spotify:track:1aSrUZe9Qoqj6aupGUI2OG\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/1aSrUZe9Qoqj6aupGUI2OG\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/1aSrUZe9Qoqj6aupGUI2OG\"\n        },\n        {\n            \"id\": \"0enlCPFBhDHoVb17C4PsBM\",\n            \"title\": \"One Turns To None\",\n            \"uri\": \"spotify:track:0enlCPFBhDHoVb17C4PsBM\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/0enlCPFBhDHoVb17C4PsBM\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/0enlCPFBhDHoVb17C4PsBM\"\n        },\n        {\n            \"id\": \"74iActL1pCgQKnWZvtERGT\",\n            \"title\": \"It's Not Me (It's You)\",\n            \"uri\": \"spotify:track:74iActL1pCgQKnWZvtERGT\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/74iActL1pCgQKnWZvtERGT\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/74iActL1pCgQKnWZvtERGT\"\n        },\n        {\n            \"id\": \"4aqG20FWw06uQYITDM9X5V\",\n            \"title\": \"Here's To Starting Over\",\n            \"uri\": \"spotify:track:4aqG20FWw06uQYITDM9X5V\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/4aqG20FWw06uQYITDM9X5V\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/4aqG20FWw06uQYITDM9X5V\"\n        },\n        {\n            \"id\": \"1tSwdMctOsImhEEN7bxYMG\",\n            \"title\": \"What's Gonna Be\",\n            \"uri\": \"spotify:track:1tSwdMctOsImhEEN7bxYMG\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/1tSwdMctOsImhEEN7bxYMG\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/1tSwdMctOsImhEEN7bxYMG\"\n        },\n        {\n            \"id\": \"0QPdRunyKHbFSNaQRQzQm7\",\n            \"title\": \"Give You Up\",\n            \"uri\": \"spotify:track:0QPdRunyKHbFSNaQRQzQm7\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/0QPdRunyKHbFSNaQRQzQm7\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/0QPdRunyKHbFSNaQRQzQm7\"\n        },\n        {\n            \"id\": \"6C2UtGuoXjGN4JdeJvO3MT\",\n            \"title\": \"In My Blood\",\n            \"uri\": \"spotify:track:6C2UtGuoXjGN4JdeJvO3MT\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/6C2UtGuoXjGN4JdeJvO3MT\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/6C2UtGuoXjGN4JdeJvO3MT\"\n        },\n        {\n            \"id\": \"2918T2ucPJn7lIxP0IGZnW\",\n            \"title\": \"The Violence\",\n            \"uri\": \"spotify:track:2918T2ucPJn7lIxP0IGZnW\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/2918T2ucPJn7lIxP0IGZnW\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/2918T2ucPJn7lIxP0IGZnW\"\n        },\n        {\n            \"id\": \"1kGXA84lZPgBvUJCg3UEsO\",\n            \"title\": \"Lorazepam\",\n            \"uri\": \"spotify:track:1kGXA84lZPgBvUJCg3UEsO\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/1kGXA84lZPgBvUJCg3UEsO\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/1kGXA84lZPgBvUJCg3UEsO\"\n        },\n        {\n            \"id\": \"2HIzPI3Fxc3gBXbi8UgH1x\",\n            \"title\": \"Riot\",\n            \"uri\": \"spotify:track:2HIzPI3Fxc3gBXbi8UgH1x\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/2HIzPI3Fxc3gBXbi8UgH1x\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/2HIzPI3Fxc3gBXbi8UgH1x\"\n        },\n        {\n            \"id\": \"4bl5qvLNSJng48smi0uVO7\",\n            \"title\": \"Ghost\",\n            \"uri\": \"spotify:track:4bl5qvLNSJng48smi0uVO7\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/4bl5qvLNSJng48smi0uVO7\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/4bl5qvLNSJng48smi0uVO7\"\n        },\n        {\n            \"id\": \"3zQikNPCgTVnQLmj5RPn1k\",\n            \"title\": \"I Got So High That I Saw Jesus\",\n            \"uri\": \"spotify:track:3zQikNPCgTVnQLmj5RPn1k\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/3zQikNPCgTVnQLmj5RPn1k\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/3zQikNPCgTVnQLmj5RPn1k\"\n        },\n        {\n            \"id\": \"0AXB2KmgSGjB886FJglrgJ\",\n            \"title\": \"Liar\",\n            \"uri\": \"spotify:track:0AXB2KmgSGjB886FJglrgJ\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/0AXB2KmgSGjB886FJglrgJ\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/0AXB2KmgSGjB886FJglrgJ\"\n        },\n        {\n            \"id\": \"6U1iuA5QfzYRPJxvdcxqtf\",\n            \"title\": \"Lonely\",\n            \"uri\": \"spotify:track:6U1iuA5QfzYRPJxvdcxqtf\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/6U1iuA5QfzYRPJxvdcxqtf\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/6U1iuA5QfzYRPJxvdcxqtf\"\n        },\n        {\n            \"id\": \"2aav0K63pZ1x2mEj0aDGat\",\n            \"title\": \"Young & Sad\",\n            \"uri\": \"spotify:track:2aav0K63pZ1x2mEj0aDGat\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/2aav0K63pZ1x2mEj0aDGat\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/2aav0K63pZ1x2mEj0aDGat\"\n        },\n        {\n            \"id\": \"6J2LdBN97cDWn0MLxYh9HB\",\n            \"title\": \"July\",\n            \"uri\": \"spotify:track:6J2LdBN97cDWn0MLxYh9HB\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/6J2LdBN97cDWn0MLxYh9HB\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/6J2LdBN97cDWn0MLxYh9HB\"\n        },\n        {\n            \"id\": \"2M8JffLDYXcGBAnaYB7bVz\",\n            \"title\": \"Wonder Years (feat. Ant Clemons)\",\n            \"uri\": \"spotify:track:2M8JffLDYXcGBAnaYB7bVz\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/2M8JffLDYXcGBAnaYB7bVz\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/2M8JffLDYXcGBAnaYB7bVz\"\n        },\n        {\n            \"id\": \"3Svynwi8VIgkDKQQiEPYCB\",\n            \"title\": \"The End of Everything\",\n            \"uri\": \"spotify:track:3Svynwi8VIgkDKQQiEPYCB\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/3Svynwi8VIgkDKQQiEPYCB\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/3Svynwi8VIgkDKQQiEPYCB\"\n        },\n        {\n            \"id\": \"6WI33r2QRxyxttn3KH0XkC\",\n            \"title\": \"Will - Remix\",\n            \"uri\": \"spotify:track:6WI33r2QRxyxttn3KH0XkC\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/6WI33r2QRxyxttn3KH0XkC\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/6WI33r2QRxyxttn3KH0XkC\"\n        },\n        {\n            \"id\": \"3WnTQDd9A3bpBfzCziElU9\",\n            \"title\": \"Excitement\",\n            \"uri\": \"spotify:track:3WnTQDd9A3bpBfzCziElU9\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/3WnTQDd9A3bpBfzCziElU9\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/3WnTQDd9A3bpBfzCziElU9\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "GET single song",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "35ee2128-ebe2-4d83-aedf-3d13134202ea",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Song ID antara request dan response sama\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.details.id).to.eql(pm.variables.get('song-id'));\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "3800f175-f871-4122-ade5-2323523cd357",
+								"exec": [
+									"pm.sendRequest(`${pm.environment.get(\"url\")}/api/songs?page=1&market=ID}`, function (err, response) {\r",
+									"    let x = response.json()\r",
+									"    pm.variables.set('song-id', x.data[0].id)\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/songs/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"songs",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{song-id}}",
+									"type": "string"
+								}
+							]
+						},
+						"description": "Endpoint untuk mendapatkan detail dari satu lagu (track)\r\n\r\nParameter:\r\n+ id: wajib. id dari lagu yang ingin dilihat detailnya\r\n\r\nResponse: \r\n+ details: informasi detail dari lagu.\r\n+ artists: penyanyi / grup yang membawakan lagu tersebut"
+					},
+					"response": [
+						{
+							"name": "GET single - sukses",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/api/songs/:id",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"songs",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "6QeUzTuBoasiii8nevDciq"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Cowboy"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "539"
+								},
+								{
+									"key": "Etag",
+									"value": "W/\"21b-EwiDiWIBp3mLFWLx1NFxqz1a3xo\""
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 25 May 2020 09:52:56 GMT"
+								},
+								{
+									"key": "Via",
+									"value": "1.1 vegur"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"details\": {\n        \"id\": \"6QeUzTuBoasiii8nevDciq\",\n        \"title\": \"Trapped In The Sun\",\n        \"uri\": \"spotify:track:6QeUzTuBoasiii8nevDciq\",\n        \"preview\": \"https://p.scdn.co/mp3-preview/ff4873333bd9b92860d70cfabcd9d57470cdde04?cid=9f547ab27dfc4663ae11a3e0bb4ed46f\",\n        \"external_id\": {\n            \"isrc\": \"USSM12003412\"\n        },\n        \"external\": {\n            \"spotify\": \"https://open.spotify.com/track/6QeUzTuBoasiii8nevDciq\"\n        }\n    },\n    \"artists\": [\n        {\n            \"name\": \"Future\",\n            \"id\": \"1RyvyyTE3xzB2ZywiAwp0i\",\n            \"uri\": \"spotify:artist:1RyvyyTE3xzB2ZywiAwp0i\",\n            \"profile\": {\n                \"spotify\": \"https://open.spotify.com/artist/1RyvyyTE3xzB2ZywiAwp0i\"\n            }\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "SEARCH by title",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "66471702-5e98-451e-a2c8-a9cb143cff47",
+								"exec": [
+									"pm.variables.set('search-keyword', 'rumah')"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "deee0e57-4122-4c55-ba19-a0a99aa45120",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Check title\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"\r",
+									"    let song = jsonData.data[0].title;\r",
+									"    pm.expect(song.toLowerCase().includes(pm.variables.get('search-keyword'))).to.eql(true);\r",
+									"\r",
+									"\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/songs/query?keyword={{search-keyword}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"songs",
+								"query"
+							],
+							"query": [
+								{
+									"key": "keyword",
+									"value": "{{search-keyword}}",
+									"description": "wajib."
+								},
+								{
+									"key": "market",
+									"value": "AE",
+									"description": "optional. ISO 3166-1 alpha-2 country codes https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements",
+									"disabled": true
+								},
+								{
+									"key": "offset",
+									"value": "0",
+									"description": "opsional.",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"description": "opsional",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Endpoint untuk mendapatkan lagu berdasarkan judul tertentu.  \r\nSifat pencariannya LIKE \r\n\r\nParameter: \r\n+ keyword: Wajib, string. Kata pada judul lagu yang ingin dicari\r\n+ market: Opsional, ISO 3166-1 alpha-2 country codes\r\n+ offset dan limit: untuk paging dan membatasi kembalian pada tiap pencarian\r\n\r\nResponse:\r\n+ offset dan limit: informasi paging berdasarkan query\r\n+ total: banyak lagu yang sesuai dengan keyword pencarian\r\n+ data: array lagu yang memenuhi syarat pencarian.\r\n\r\nTiap elemen pada data akan memiliki atribut: \r\n+ id: id lagu yang dapat digunakan untuk menambahkan lagu ke dalam playlist / melihat detail lagu\r\n+ title: judul lagu terkait\r\n+ uri: URI Spotify yang dapat digunakan untuk *deeplinking* ke dalam aplikasi Spotify\r\n+ external dan details: URL eksternal untuk mendapatkan informasi lebih lanjut tentang lagu terkait"
+					},
+					"response": [
+						{
+							"name": "SEARCH",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/api/songs/query?keyword=home&offset=0&limit=10",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"songs",
+										"query"
+									],
+									"query": [
+										{
+											"key": "keyword",
+											"value": "home",
+											"description": "required. word in song title to search"
+										},
+										{
+											"key": "market",
+											"value": "AE",
+											"description": "optional. ISO 3166-1 alpha-2 country codes https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements",
+											"disabled": true
+										},
+										{
+											"key": "offset",
+											"value": "0",
+											"description": "optional. offset result"
+										},
+										{
+											"key": "limit",
+											"value": "10",
+											"description": "optional. limit returned results"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "2541"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"9ed-UrGjdCkK2sSfoVAoZPrSrxFg+Eo\""
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 21 May 2020 05:13:00 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"offset\": 0,\n    \"limit\": 10,\n    \"total\": 100010,\n    \"data\": [\n        {\n            \"id\": \"30RZAuEkYeDXvy46Iv6l7E\",\n            \"title\": \"Homesick\",\n            \"uri\": \"spotify:track:30RZAuEkYeDXvy46Iv6l7E\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/30RZAuEkYeDXvy46Iv6l7E\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/30RZAuEkYeDXvy46Iv6l7E\"\n        },\n        {\n            \"id\": \"6vxU64pcIuQ38O015Zy4qj\",\n            \"title\": \"Homecoming\",\n            \"uri\": \"spotify:track:6vxU64pcIuQ38O015Zy4qj\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/6vxU64pcIuQ38O015Zy4qj\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/6vxU64pcIuQ38O015Zy4qj\"\n        },\n        {\n            \"id\": \"4rsW3WCZBGwhHfJWuHRwyT\",\n            \"title\": \"Home\",\n            \"uri\": \"spotify:track:4rsW3WCZBGwhHfJWuHRwyT\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/4rsW3WCZBGwhHfJWuHRwyT\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/4rsW3WCZBGwhHfJWuHRwyT\"\n        },\n        {\n            \"id\": \"31JID2STTlLuFqXFWHyM8e\",\n            \"title\": \"Homemade\",\n            \"uri\": \"spotify:track:31JID2STTlLuFqXFWHyM8e\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/31JID2STTlLuFqXFWHyM8e\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/31JID2STTlLuFqXFWHyM8e\"\n        },\n        {\n            \"id\": \"5C6uh95eAL0RBTSGXKQwvk\",\n            \"title\": \"Hometown Girl\",\n            \"uri\": \"spotify:track:5C6uh95eAL0RBTSGXKQwvk\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/5C6uh95eAL0RBTSGXKQwvk\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/5C6uh95eAL0RBTSGXKQwvk\"\n        },\n        {\n            \"id\": \"1qwnPVOIJjAFfCc40Etb1D\",\n            \"title\": \"Homegrown\",\n            \"uri\": \"spotify:track:1qwnPVOIJjAFfCc40Etb1D\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/1qwnPVOIJjAFfCc40Etb1D\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/1qwnPVOIJjAFfCc40Etb1D\"\n        },\n        {\n            \"id\": \"1s71G3V7XQaVo5IOR6gLbp\",\n            \"title\": \"homecoming queen?\",\n            \"uri\": \"spotify:track:1s71G3V7XQaVo5IOR6gLbp\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/1s71G3V7XQaVo5IOR6gLbp\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/1s71G3V7XQaVo5IOR6gLbp\"\n        },\n        {\n            \"id\": \"7w5cxTEzp1rfV3KCy0Bd5N\",\n            \"title\": \"Home\",\n            \"uri\": \"spotify:track:7w5cxTEzp1rfV3KCy0Bd5N\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/7w5cxTEzp1rfV3KCy0Bd5N\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/7w5cxTEzp1rfV3KCy0Bd5N\"\n        },\n        {\n            \"id\": \"0OI7AFifLSoGzpb8bdBLLV\",\n            \"title\": \"Home (with Machine Gun Kelly, X Ambassadors & Bebe Rexha)\",\n            \"uri\": \"spotify:track:0OI7AFifLSoGzpb8bdBLLV\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/0OI7AFifLSoGzpb8bdBLLV\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/0OI7AFifLSoGzpb8bdBLLV\"\n        },\n        {\n            \"id\": \"7lthOBXNue2IvedLRfkod8\",\n            \"title\": \"HOME\",\n            \"uri\": \"spotify:track:7lthOBXNue2IvedLRfkod8\",\n            \"external\": {\n                \"spotify\": \"https://open.spotify.com/track/7lthOBXNue2IvedLRfkod8\"\n            },\n            \"details\": \"https://api.spotify.com/v1/tracks/7lthOBXNue2IvedLRfkod8\"\n        }\n    ]\n}"
+						}
+					]
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "PLAYLIST RESOURCES",
+			"item": [
+				{
+					"name": "CREATE",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "bd0d42ac-3ac2-499e-8540-024646e8b2d8",
+								"exec": [
+									"let iter = parseInt(pm.collectionVariables.get('iter-create'));\r",
+									"\r",
+									"if (!iter) iter = 1;\r",
+									"const url = `${pm.variables.get('url')}/api/playlist`\r",
+									"\r",
+									"switch (iter){\r",
+									"    case 1: \r",
+									"    case 2:\r",
+									"    pm.variables.set('token-user', pm.collectionVariables.get('user-regular-login-token'))\r",
+									"    for (let i=0; i<2; ++i){\r",
+									"        pm.sendRequest({\r",
+									"            url,\r",
+									"            method: 'POST',\r",
+									"            body: {\r",
+									"                mode:'urlencoded',\r",
+									"                urlencoded: [{key: 'nama_playlist', value: `dummy playlist ${i+1}`, disabled: false}]\r",
+									"            },\r",
+									"            header: {\r",
+									"                'x-auth-token': pm.collectionVariables.get('user-regular-login-token')\r",
+									"            }\r",
+									"        }, function (err, response) {\r",
+									"            console.log(response.json());\r",
+									"        });\r",
+									"    }\r",
+									"    break;\r",
+									"\r",
+									"    case 3: \r",
+									"    pm.variables.set('token-user', pm.collectionVariables.get('user-premium-login-token'))\r",
+									"    for (let i=0; i<3; ++i){\r",
+									"        pm.sendRequest({\r",
+									"            url,\r",
+									"            method: 'POST',\r",
+									"            body: {\r",
+									"                mode:'urlencoded',\r",
+									"                urlencoded: [{key: 'nama_playlist', value: `dummy playlist ${i+1}`, disabled: false}]\r",
+									"            },\r",
+									"            header: {\r",
+									"                'x-auth-token': pm.collectionVariables.get('user-premium-login-token')\r",
+									"            }\r",
+									"        }, function (err, response) {\r",
+									"            console.log(response.json());\r",
+									"        });\r",
+									"    }\r",
+									"    break;\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "7baa4b9e-65b8-412d-9dae-d9ddab179a30",
+								"exec": [
+									"let iter = parseInt(pm.collectionVariables.get('iter-create'));\r",
+									"if (!iter) iter = 1;\r",
+									"\r",
+									"switch(iter){\r",
+									"    case 1:\r",
+									"        pm.test(`Buat playlist user biasa`, function () {\r",
+									"            pm.response.to.have.status(200);\r",
+									"        });\r",
+									"        pm.collectionVariables.set('iter-create', iter + 1);\r",
+									"        postman.setNextRequest('CREATE');\r",
+									"    break;\r",
+									"    case 2: \r",
+									"        pm.test(`Buat playlist user biasa, over quota`, function () {\r",
+									"            pm.response.to.have.status(400);\r",
+									"        });\r",
+									"        pm.collectionVariables.set('iter-create', iter + 1);\r",
+									"        postman.setNextRequest('CREATE');\r",
+									"        break;\r",
+									"    case 3: \r",
+									"        pm.test(`Buat playlist user premium, tidak ada over quota`, function () {\r",
+									"            pm.response.to.have.status(200);\r",
+									"        });\r",
+									"        pm.collectionVariables.set('iter-create', iter + 1);\r",
+									"        break;\r",
+									"}\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "{{token-user}}",
+								"description": "JSON Web Token yang didapat dari endpoint LOGIN",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "nama_playlist",
+									"value": "Playlist Baru",
+									"type": "text"
+								},
+								{
+									"key": "deskripsi_playlist",
+									"value": "Deskripsi playlist baru",
+									"type": "text"
+								}
+							],
+							"options": {
+								"urlencoded": {}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/playlist",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"playlist"
+							]
+						},
+						"description": "Endpoint yang digunakan untuk membuat playlist\r\n\r\nParameter:\r\n+ header (x-auth-token): wajib. token autentikasi user\r\n+ nama_playlist : wajib. Nama playlist yang akan dibuat\r\n+ deskripsi_playlist : opsional. deskripsi yang ingin ditulis di playlist\r\n\r\nResponse:\r\n+ message : Pesan berhasil/ tidaknya menambahkan plasylist\r\n+ playlist: data playlist yang baru saja dibuat"
+					},
+					"response": [
+						{
+							"name": "CREATE - tanpa nama playlist",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-auth-token",
+										"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbF91c2VyIjoiZW1haWxAZW1haWwuY29tIiwiaWF0IjoxNTkwNDc4MzUyLCJleHAiOjE1OTA1NjQ3NTJ9.BScakWF8Euxz44T38X6vR0zfRCrljMKmuQZXwD-a_EA",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "nama_playlist",
+											"value": "",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "deskripsi_playlist",
+											"value": "Deskripsi playlist 1",
+											"type": "text"
+										}
+									],
+									"options": {
+										"urlencoded": {}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/api/playlist",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"playlist"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Cowboy"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "58"
+								},
+								{
+									"key": "Etag",
+									"value": "W/\"3a-3Qx0Pl7xFQyk/bzPF+dBHDMFFnY\""
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 26 May 2020 07:45:31 GMT"
+								},
+								{
+									"key": "Via",
+									"value": "1.1 vegur"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 400,\n    \"message\": \"Nama playlist wajib dicantumkan\"\n}"
+						},
+						{
+							"name": "CREATE - tanpa token",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "nama_playlist",
+											"value": "Playlist 1",
+											"type": "text"
+										},
+										{
+											"key": "deskripsi_playlist",
+											"value": "Deskripsi Playlist 1",
+											"type": "text"
+										}
+									],
+									"options": {
+										"urlencoded": {}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/api/playlist",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"playlist"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Cowboy"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "47"
+								},
+								{
+									"key": "Etag",
+									"value": "W/\"2f-pu97Lma/L/59zKdWgX3BUFlKAfs\""
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 26 May 2020 07:46:49 GMT"
+								},
+								{
+									"key": "Via",
+									"value": "1.1 vegur"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 400,\n    \"message\": \"jwt must be provided\"\n}"
+						},
+						{
+							"name": "CREATE - sukses",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-auth-token",
+										"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbF91c2VyIjoiaXZhbmdvaXZhbkBnbWFpbC5jb20iLCJpYXQiOjE1OTA0ODIwNDksImV4cCI6MTU5MDU2ODQ0OX0.L17HSwkJzaFz2hOk75f9MV9tg6TXUJ44dcWfklmHEpA",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "nama_playlist",
+											"value": "MyPlaylist 2",
+											"type": "text"
+										},
+										{
+											"key": "deskripsi_playlist",
+											"value": "MyPlaylist 2",
+											"type": "text"
+										}
+									],
+									"options": {
+										"urlencoded": {}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/api/playlist",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"playlist"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Cowboy"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "297"
+								},
+								{
+									"key": "Etag",
+									"value": "W/\"129-Or/C9bcpvuKYRQXM/xMiD/U2XME\""
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 26 May 2020 08:38:40 GMT"
+								},
+								{
+									"key": "Via",
+									"value": "1.1 vegur"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 200,\n    \"message\": \"Berhasil add playlist MyPlaylist 2\",\n    \"playlist\": {\n        \"jenis_playlist\": 1,\n        \"jumlah_lagu\": 0,\n        \"id\": 6,\n        \"email_user\": \"ivangoivan@gmail.com\",\n        \"nama_playlist\": \"MyPlaylist 2\",\n        \"deskripsi_playlist\": \"MyPlaylist 2\",\n        \"updatedAt\": \"2020-05-26T08:38:40.034Z\",\n        \"createdAt\": \"2020-05-26T08:38:40.034Z\"\n    }\n}"
+						},
+						{
+							"name": "CREATE - melebihi kuota",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-auth-token",
+										"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbF91c2VyIjoiZW1haWxAZW1haWwuY29tIiwiaWF0IjoxNTkwNDc4MzUyLCJleHAiOjE1OTA1NjQ3NTJ9.BScakWF8Euxz44T38X6vR0zfRCrljMKmuQZXwD-a_EA",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "nama_playlist",
+											"value": "keempat",
+											"type": "text"
+										}
+									],
+									"options": {
+										"urlencoded": {}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/api/playlist",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"playlist"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Cowboy"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "76"
+								},
+								{
+									"key": "Etag",
+									"value": "W/\"4c-W51XFLJPhEolOkLMp71QzYrwgzM\""
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 26 May 2020 07:46:14 GMT"
+								},
+								{
+									"key": "Via",
+									"value": "1.1 vegur"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 400,\n    \"message\": \"Free user hanya dapat membuat playlist maksimal 3\"\n}"
+						},
+						{
+							"name": "CREATE",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-auth-token",
+										"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbF91c2VyIjoiZW1haWxAZW1haWwuY29tIiwiaWF0IjoxNTkwNDgxNzg5LCJleHAiOjE1OTA1NjgxODl9.1QwI5Dij1_2UkcGoubwihSn0m4JVtOKLxqbKtfVfqpM",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "nama_playlist",
+											"value": "Playlist Baru",
+											"type": "text"
+										},
+										{
+											"key": "deskripsi_playlist",
+											"value": "Deskripsi playlist baru",
+											"type": "text"
+										}
+									],
+									"options": {
+										"urlencoded": {}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/api/playlist",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"playlist"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Cowboy"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "305"
+								},
+								{
+									"key": "Etag",
+									"value": "W/\"131-HVNpCfMgGewkwRH1MRVda0VTMsM\""
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 26 May 2020 08:40:55 GMT"
+								},
+								{
+									"key": "Via",
+									"value": "1.1 vegur"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 200,\n    \"message\": \"Berhasil add playlist Playlist Baru\",\n    \"playlist\": {\n        \"jenis_playlist\": 1,\n        \"jumlah_lagu\": 0,\n        \"id\": 7,\n        \"email_user\": \"email@email.com\",\n        \"nama_playlist\": \"Playlist Baru\",\n        \"deskripsi_playlist\": \"Deskripsi playlist baru\",\n        \"updatedAt\": \"2020-05-26T08:40:55.056Z\",\n        \"createdAt\": \"2020-05-26T08:40:55.056Z\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "UPDATE Playlist",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "5bb8ccf2-f344-4a35-a00b-7f01fd390a4c",
+								"exec": [
+									"let iter = parseInt(pm.collectionVariables.get('iter-updateplaylist'))\r",
+									"if (!iter) iter = 1;\r",
+									"\r",
+									"if (iter === 1){\r",
+									"    //user biasa\r",
+									"    pm.variables.set('token-user', pm.collectionVariables.get('user-regular-login-token'));\r",
+									"    pm.sendRequest({\r",
+									"    url: `${pm.environment.get('url')}/api/user`,\r",
+									"    method: \"GET\",\r",
+									"    header: {\r",
+									"        'x-auth-token': pm.variables.get('token-user')\r",
+									"    }\r",
+									"    }, function (err, response) {\r",
+									"        const myobj = response.json();\r",
+									"        const myplaylists = myobj['playlist'];\r",
+									"        const publics = myplaylists.filter(e => e.jenis_playlist===1)\r",
+									"\r",
+									"        // const id = publics[Math.random(0, publics.length)];\r",
+									"        let id = publics[getRandomInt(publics.length)]\r",
+									"        console.log(id);\r",
+									"        id = id.id;\r",
+									"        pm.variables.set('playlist-toupdate', parseInt(id));\r",
+									"        pm.collectionVariables.set('private-id', parseInt(id));\r",
+									"        pm.variables.set('jenis-playlist', 0);\r",
+									"    });\r",
+									"}\r",
+									"else if (iter === 2){\r",
+									"    //user A update user B\r",
+									"    const userA = pm.variables.get('user-premium-login-token');\r",
+									"    const userB = pm.variables.get('user-regular-login-token');\r",
+									"    pm.variables.set('token-user', userA);\r",
+									"\r",
+									"    //ambil playlist user B\r",
+									"    pm.sendRequest({\r",
+									"    url: `${pm.environment.get('url')}/api/user`,\r",
+									"    method: \"GET\",\r",
+									"    header: {\r",
+									"        'x-auth-token': userB\r",
+									"    }\r",
+									"    }, function (err, response) {\r",
+									"        const myobj = response.json();\r",
+									"        const myplaylists = myobj['playlist'];\r",
+									"        const publics = myplaylists.filter(e => e.jenis_playlist===1)\r",
+									"\r",
+									"        // const id = publics[Math.random(0, publics.length)];\r",
+									"        let id = publics[getRandomInt(publics.length)]\r",
+									"        console.log(id);\r",
+									"        id = id.id;\r",
+									"        pm.variables.set('playlist-toupdate', parseInt(id));\r",
+									"        pm.variables.set('jenis-playlist', 0);\r",
+									"    });\r",
+									"}\r",
+									"\r",
+									"function getRandomInt(max) {\r",
+									"  return Math.floor(Math.random() * Math.floor(max));\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "a2a97ec4-78fa-456d-9e33-212135b434c8",
+								"exec": [
+									"let iter = parseInt(pm.collectionVariables.get('iter-updateplaylist'))\r",
+									"if (!iter) iter = 1;\r",
+									"\r",
+									"if (iter === 1){\r",
+									"    pm.test(\"User biasa, update playlist sendiri ubah jadi private, status code is 200\", function () {\r",
+									"        pm.response.to.have.status(200);\r",
+									"    });\r",
+									"\r",
+									"    pm.test(\"Cek pesan\", function () {\r",
+									"        var jsonData = pm.response.json();\r",
+									"        pm.expect(jsonData.message).to.eql('Sukses Update Playlist');\r",
+									"    });\r",
+									"    postman.setNextRequest('UPDATE Playlist');\r",
+									"    pm.collectionVariables.set('iter-updateplaylist', iter+1)\r",
+									"}\r",
+									"else if (iter === 2){\r",
+									"    pm.test(\"Update playlist milik orang lain, status code is 400\", function () {\r",
+									"        pm.response.to.have.status(400);\r",
+									"    });\r",
+									"}\r",
+									"else {\r",
+									"    \r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"description": "JSON Web Token yang didapat dari endpoint LOGIN",
+								"key": "x-auth-token",
+								"type": "text",
+								"value": "{{token-user}}"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "id_playlist",
+									"value": "{{playlist-toupdate}}",
+									"type": "text"
+								},
+								{
+									"key": "deskripsi_playlist",
+									"value": "Deskripsi Playlist Setelah Di Update",
+									"type": "text"
+								},
+								{
+									"key": "jenis_playlist",
+									"value": "{{status-playlist}}",
+									"type": "text"
+								}
+							],
+							"options": {
+								"urlencoded": {}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/playlist/update",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"playlist",
+								"update"
+							]
+						},
+						"description": "Endpoint yang digunakan untuk melakukan update deskripsi dan jenis playlist\r\n\r\nParameter:\r\n+ header (x-auth-token): token autentikasi user\r\n+ id_playlist : wajib. Id playlist yang akan diupdate\r\n+ deskripsi_playlist : wajib. deskripsi yang ingin ditulis di playlist\r\n+ jenis_playlist : wajib. jenis dari playlist 1 untuk public\r\n\r\nResponse:\r\n+ message : Pesan berhasil/ tidaknya update data pada playlist"
+					},
+					"response": [
+						{
+							"name": "UPDATE Playlist - sukses update playlist",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "x-auth-token",
+										"type": "text",
+										"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbF91c2VyIjoiaXZhbmdvaXZhbkBnbWFpbC5jb20iLCJpYXQiOjE1OTA0ODIwNDksImV4cCI6MTU5MDU2ODQ0OX0.L17HSwkJzaFz2hOk75f9MV9tg6TXUJ44dcWfklmHEpA"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "id_playlist",
+											"value": "6",
+											"type": "text"
+										},
+										{
+											"key": "deskripsi_playlist",
+											"value": "deskripsi playlist baru",
+											"type": "text"
+										},
+										{
+											"key": "jenis_playlist",
+											"value": "0",
+											"type": "text"
+										}
+									],
+									"options": {
+										"urlencoded": {}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/api/playlist/update",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"playlist",
+										"update"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Cowboy"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "36"
+								},
+								{
+									"key": "Etag",
+									"value": "W/\"24-VtLKAfQAnaNAji3wRiCvvvnA+ns\""
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 26 May 2020 09:02:48 GMT"
+								},
+								{
+									"key": "Via",
+									"value": "1.1 vegur"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Sukses Update Playlist\"\n}"
+						},
+						{
+							"name": "UPDATE Playlist - Update playlist milik pengguna lain",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "x-auth-token",
+										"type": "text",
+										"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbF91c2VyIjoiaXZhbmdvaXZhbkBnbWFpbC5jb20iLCJpYXQiOjE1OTA0ODIwNDksImV4cCI6MTU5MDU2ODQ0OX0.L17HSwkJzaFz2hOk75f9MV9tg6TXUJ44dcWfklmHEpA"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "id_playlist",
+											"value": "1",
+											"type": "text"
+										},
+										{
+											"key": "deskripsi_playlist",
+											"value": "deskripsi playlist baru",
+											"type": "text"
+										},
+										{
+											"key": "jenis_playlist",
+											"value": "0",
+											"type": "text"
+										}
+									],
+									"options": {
+										"urlencoded": {}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/api/playlist/update",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"playlist",
+										"update"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Cowboy"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "38"
+								},
+								{
+									"key": "Etag",
+									"value": "W/\"26-rkj6FymsLEHXYVE74z82JzHPEJw\""
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 26 May 2020 09:02:25 GMT"
+								},
+								{
+									"key": "Via",
+									"value": "1.1 vegur"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Playlist Tidak Ditemukan\"\n}"
+						}
+					]
+				},
+				{
+					"name": "GET multiple playlist",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "11dee3a7-17e5-43b5-90ae-75c1b83d168a",
+								"exec": [
+									"let iter = parseInt(pm.collectionVariables.get('iter-getplaylist'))\r",
+									"if (!iter) iter = 1;\r",
+									"\r",
+									"if (iter === 1){\r",
+									"    pm.variables.set('token-user', '');\r",
+									"}\r",
+									"else if (iter === 2){\r",
+									"    pm.variables.set('token-user', pm.collectionVariables.get('user-regular-login-token'));\r",
+									"    //user premium\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "6f4f5eea-4729-490e-bbae-7885c506b3af",
+								"exec": [
+									"let iter = parseInt(pm.collectionVariables.get('iter-getplaylist'))\r",
+									"if (!iter) iter = 1;\r",
+									"\r",
+									"if (iter === 1){\r",
+									"    pm.test(\"Request tanpa header auth, Status code is 200\", function () {\r",
+									"        pm.response.to.have.status(200);\r",
+									"    });\r",
+									"    pm.test(\"tidak ada playlist tipe PRIVATE\", function () {\r",
+									"        var jsonData = pm.response.json();\r",
+									"        let private = jsonData.playlists.filter(element=>{\r",
+									"            return element.time === 'private'\r",
+									"        })\r",
+									"        pm.expect(private.length).to.eql(0);\r",
+									"    });    \r",
+									"    pm.test(\"terdapat playlist tipe PUBLIC\", function () {\r",
+									"        var jsonData = pm.response.json();\r",
+									"        jsonData.playlists.forEach(element=>{\r",
+									"            pm.expect(element.tipe).to.eql('public');\r",
+									"        })\r",
+									"        // console.log('get multiple playlist', jsonData);\r",
+									"    });\r",
+									"    pm.collectionVariables.set('iter-getplaylist', iter+1)\r",
+									"    postman.setNextRequest('GET multiple playlist');\r",
+									"}\r",
+									"else if (iter === 2){\r",
+									"    pm.test(\"Request dengan header auth, Status code is 200\", function () {\r",
+									"        pm.response.to.have.status(200);\r",
+									"    });\r",
+									"    \r",
+									"    pm.test(\"terdapat playlist yang sifatnya private\", function () {\r",
+									"        var jsonData = pm.response.json();\r",
+									"        let private = jsonData.playlists.filter(element=>{\r",
+									"            return element.time === 'private'\r",
+									"        })\r",
+									"        private.forEach(element =>  pm.expect(element.tipe).to.eql('private'))\r",
+									"    });\r",
+									"\r",
+									"    pm.test(\"terdapat playlist yang sifatnya public\", ()=>{\r",
+									"        var jsonData = pm.response.json();\r",
+									"        let publics = jsonData.playlists.filter(element=>{\r",
+									"            return element.time === 'public'\r",
+									"        })\r",
+									"        publics.forEach(element =>  pm.expect(element.tipe).to.eql('public'))\r",
+									"\r",
+									"    })\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"description": "JSON Web Token yang didapat dari endpoint LOGIN",
+								"key": "x-auth-token",
+								"type": "text",
+								"value": "{{token-user}}"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/api/playlist?page=1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"playlist"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Endpoint untuk mendapatkan beberapa (maksimal 10) playlist sekaligus.  \r\nBila diberikan token, dapat melihat private playlist dari user tersebut.  \r\n\r\nParamter: \r\n+ Header (x-auth-token): opsional, token autentikasi user yang didapatkan melalui endpoint login\r\n+ page: opsional, integer untuk paging"
+					},
+					"response": [
+						{
+							"name": "GET multiple playlist",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"description": "JSON Web Token yang didapat dari endpoint LOGIN",
+										"key": "x-auth-token",
+										"type": "text",
+										"value": "{{token-user}}"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/api/playlist?page=1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"playlist"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "803"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"323-04Tx0pkX6eHqE4F8wto6vUpJb94\""
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 30 May 2020 14:20:30 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 200,\n    \"playlists\": [\n        {\n            \"id_playlist\": 1,\n            \"nama\": \"dummy playlist 1\",\n            \"creator\": \"regular@email.com\",\n            \"deskripsi\": null,\n            \"tipe\": \"public\",\n            \"jumlah_lagu\": 20\n        },\n        {\n            \"id_playlist\": 3,\n            \"nama\": \"Playlist Baru\",\n            \"creator\": \"regular@email.com\",\n            \"deskripsi\": \"Deskripsi playlist baru\",\n            \"tipe\": \"public\",\n            \"jumlah_lagu\": 0\n        },\n        {\n            \"id_playlist\": 4,\n            \"nama\": \"dummy playlist 1\",\n            \"creator\": \"premium@email.com\",\n            \"deskripsi\": null,\n            \"tipe\": \"public\",\n            \"jumlah_lagu\": 0\n        },\n        {\n            \"id_playlist\": 5,\n            \"nama\": \"dummy playlist 2\",\n            \"creator\": \"premium@email.com\",\n            \"deskripsi\": null,\n            \"tipe\": \"public\",\n            \"jumlah_lagu\": 0\n        },\n        {\n            \"id_playlist\": 6,\n            \"nama\": \"dummy playlist 3\",\n            \"creator\": \"premium@email.com\",\n            \"deskripsi\": null,\n            \"tipe\": \"public\",\n            \"jumlah_lagu\": 0\n        },\n        {\n            \"id_playlist\": 7,\n            \"nama\": \"Playlist Baru\",\n            \"creator\": \"premium@email.com\",\n            \"deskripsi\": \"Deskripsi playlist baru\",\n            \"tipe\": \"public\",\n            \"jumlah_lagu\": 2\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "ISI PLAYLIST",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "a8673f32-a5f6-4d5b-bffe-eff1a5f6587b",
+								"exec": [
+									"function getRandomInt(max) {\r",
+									"  return Math.floor(Math.random() * Math.floor(max));\r",
+									"}\r",
+									"\r",
+									"let iter = parseInt(pm.collectionVariables.get('iter-isiplaylist'));\r",
+									"if (!iter) iter = 1;\r",
+									"\r",
+									"if (iter === 1){\r",
+									"    const mytoken = pm.collectionVariables.get('user-regular-login-token');\r",
+									"    pm.variables.set('token-user', mytoken);\r",
+									"\r",
+									"    const body = {};\r",
+									"\r",
+									"    pm.sendRequest({\r",
+									"        url: `${pm.environment.get('url')}/api/user`,\r",
+									"        method: \"GET\",\r",
+									"        header: {\r",
+									"            'x-auth-token': pm.variables.get('token-user')\r",
+									"        }\r",
+									"    }, function (err, response) {\r",
+									"        const myobj = response.json();\r",
+									"        const myplaylists = myobj['playlist'];\r",
+									"        const publics = myplaylists.filter(e => e.jenis_playlist===1)\r",
+									"        // const id = publics[Math.random(0, publics.length)];\r",
+									"        let id = publics[getRandomInt(publics.length)]\r",
+									"        console.log(id);\r",
+									"        id = id.id;\r",
+									"        pm.variables.set('playlist-tofill', parseInt(id));\r",
+									"\r",
+									"        body.id_playlist = id;\r",
+									"        \r",
+									"        pm.sendRequest({\r",
+									"            url: `${pm.environment.get(\"url\")}/api/songs?page=1`\r",
+									"        }, (error, response)=>{\r",
+									"            const data = response.json();\r",
+									"            body.lagu = data.data.slice(0,10).map(e => e.id);\r",
+									"            // pm.environment.set('id-lagu', data.data.map(e=>e.id))\r",
+									"            pm.variables.set('raw-body', JSON.stringify(body));\r",
+									"        })\r",
+									"    });\r",
+									"}\r",
+									"else if (iter === 2){\r",
+									"\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "43d73fca-ff44-4cdf-81b9-0b0ff2d9e921",
+								"exec": [
+									"let iter = parseInt(pm.collectionVariables.get('iter-isiplaylist'));\r",
+									"if (!iter) iter = 1;\r",
+									"\r",
+									"if (iter === 1){\r",
+									"    pm.test(\"Tambah lagu pada playlist sendiri, Status code is 200\", function () {\r",
+									"        pm.response.to.have.status(200);\r",
+									"    });\r",
+									"    \r",
+									"    pm.test(\"Cek pesan\", function () {\r",
+									"        var jsonData = pm.response.json();\r",
+									"        pm.expect(jsonData.message).to.include(\"Berhasil menambahkan\");\r",
+									"    });\r",
+									"\r",
+									"    pm.test(\"Cek keberadaan lagu\", ()=>{\r",
+									"        pm.sendRequest({\r",
+									"            url: `${pm.variables.get('url')}/api/playlist/getPlaylist?id_playlist=${pm.variables.get('playlist-tofill')}`,\r",
+									"            header: {\r",
+									"                'x-auth-token': pm.variables.get('token-user')\r",
+									"            }\r",
+									"        }, function (err, response) {\r",
+									"            const kembalian = response.json()['lagu'];\r",
+									"            console.log('kembalian playlist', kembalian)\r",
+									"            kembalian.forEach(elem=> {\r",
+									"                pm.sendRequest({\r",
+									"                    url: `${pm.variables.get('url')}/api/songs/${elem.id_track}`\r",
+									"                }, (err, response)=>{\r",
+									"                    const kembalian_lagu = response.json();\r",
+									"\r",
+									"                    pm.expect(kembalian_lagu.details.id).to.eql(elem.id_track);\r",
+									"\r",
+									"                })\r",
+									"            })\r",
+									"        });\r",
+									"    })\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-auth-token",
+								"value": "{{token-user}}",
+								"description": "JSON Web Token yang didapat dari endpoint LOGIN",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{{raw-body}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								},
+								"urlencoded": {}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/playlist/add",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"playlist",
+								"add"
+							]
+						},
+						"description": "Endpoint yang digunakan untuk menambahkan lagu kedalam playlist\r\n\r\nParameter:\r\n+ header (x-auth-token): wajib. token autentikasi user\r\n+ id_playlist: wajib. Nama playlist yang akan dibuat\r\n+ lagu : wajib minimal 1. Id lagu yang ingin ditambahkan\r\n\r\nResponse:\r\n+ message : Pesan berhasil/ tidaknya menambahkan lagu kedalam plasylist"
+					},
+					"response": [
+						{
+							"name": "ISI PLAYLIST - saat akan mengubah entry milik user lain",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-auth-token",
+										"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbF91c2VyIjoiaXZhbmdvaXZhbkBnbWFpbC5jb20iLCJpYXQiOjE1OTA0ODIwNDksImV4cCI6MTU5MDU2ODQ0OX0.L17HSwkJzaFz2hOk75f9MV9tg6TXUJ44dcWfklmHEpA",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "id_playlist",
+											"value": "1",
+											"type": "text"
+										},
+										{
+											"key": "lagu[]",
+											"value": "7xbWAw3LMgRMn4omR5yVn",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "lagu[]",
+											"value": "0WxSQtLMCLcsAOhliamvW",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "lagu[]",
+											"value": "1qQJWohzIrKMNIz6pyyKw",
+											"type": "text"
+										}
+									],
+									"options": {
+										"urlencoded": {}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/api/playlist/add",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"playlist",
+										"add"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Cowboy"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "66"
+								},
+								{
+									"key": "Etag",
+									"value": "W/\"42-Cy4+GRtPpA9knUDTvdRDiGaIktw\""
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 26 May 2020 08:43:44 GMT"
+								},
+								{
+									"key": "Via",
+									"value": "1.1 vegur"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 400,\n    \"message\": \"Anda tidak berhak mengubah playlist ini\"\n}"
+						},
+						{
+							"name": "ISI PLAYLIST - sukses",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "x-auth-token",
+										"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbF91c2VyIjoiZW1haWxAZW1haWwuY29tIiwiaWF0IjoxNTkwNDc4MzUyLCJleHAiOjE1OTA1NjQ3NTJ9.BScakWF8Euxz44T38X6vR0zfRCrljMKmuQZXwD-a_EA",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "id_playlist",
+											"value": "1",
+											"type": "text"
+										},
+										{
+											"key": "lagu[]",
+											"value": "7xbWAw3LMgRMn4omR5yVn",
+											"type": "text"
+										},
+										{
+											"key": "lagu[]",
+											"value": "0WxSQtLMCLcsAOhliamvW",
+											"type": "text"
+										},
+										{
+											"key": "lagu[]",
+											"value": "1qQJWohzIrKMNIz6pyyKw",
+											"type": "text"
+										}
+									],
+									"options": {
+										"urlencoded": {}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/api/playlist/add",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"playlist",
+										"add"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Cowboy"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "64"
+								},
+								{
+									"key": "Etag",
+									"value": "W/\"40-pa1vHSK+ggrmTu6gHqeeH2aiCB8\""
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 26 May 2020 07:47:40 GMT"
+								},
+								{
+									"key": "Via",
+									"value": "1.1 vegur"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Berhasil menambahkan lagu pada playlist Playlist 1\"\n}"
+						}
+					]
+				},
+				{
+					"name": "DELETE",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "4742a0f2-3d8a-4428-a581-a6d6e3ac3588",
+								"exec": [
+									"let iter = parseInt(pm.collectionVariables.get('iter-deletelaguplaylist'))\r",
+									"if (!iter) iter = 1;\r",
+									"\r",
+									"if (iter === 1){\r",
+									"    const mytoken = pm.collectionVariables.get('user-regular-login-token');\r",
+									"    pm.variables.set('token-user', mytoken);\r",
+									"    pm.sendRequest({\r",
+									"        url: `${pm.variables.get('url')}/api/user`,\r",
+									"        header: {'x-auth-token':mytoken},\r",
+									"        method: 'get',\r",
+									"    }, function (err, response) {\r",
+									"        const user = response.json();\r",
+									"        getUserPlaylist(user);\r",
+									"    });\r",
+									"}\r",
+									"\r",
+									"const getUserPlaylist = (user) => {\r",
+									"    const has_song = user.playlist.find(elem => elem.jumlah_lagu > 0);\r",
+									"    console.log('playlist', has_song);\r",
+									"    pm.sendRequest({\r",
+									"        url: `${pm.variables.get('url')}/api/playlist/getPlaylist?id_playlist=${has_song.id}`,\r",
+									"        header: {'x-auth-token': pm.variables.get('token-user')},\r",
+									"        method: 'get'\r",
+									"    }, (error, response)=>{\r",
+									"        const myplaylist = response.json();\r",
+									"        deleteOneSong(myplaylist);\r",
+									"    })\r",
+									"}\r",
+									"\r",
+									"const deleteOneSong = (playlist)=>{\r",
+									"    console.log('playlist', playlist);\r",
+									"    pm.variables.set('idlagu-todelete', playlist.lagu[0].id_track);\r",
+									"    pm.variables.set('playlist-todelete', playlist.detail_playlist.id);\r",
+									"    pm.variables.set('jumlah-lagu-sebelum-delete', playlist.lagu.length);\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "cb2d20cc-b870-4d2a-90b6-c0e6166abb8f",
+								"exec": [
+									"let iter = parseInt(pm.collectionVariables.get('iter-deletelaguplaylist'))\r",
+									"if (!iter) iter = 1;\r",
+									"\r",
+									"if (iter === 1){\r",
+									"    pm.test(\"Delete satu lagu, status code is 200\", function () {\r",
+									"        pm.response.to.have.status(200);\r",
+									"    });\r",
+									"    \r",
+									"    pm.test(\"Cek Pesan\", function () {\r",
+									"        var jsonData = pm.response.json();\r",
+									"        pm.expect(jsonData.message).to.eql(`Lagu dengan id ${pm.variables.get('idlagu-todelete')} berhasil dihapus`);\r",
+									"    });\r",
+									"\r",
+									"    \r",
+									"    pm.sendRequest({\r",
+									"        url: `${pm.variables.get('url')}/api/playlist/getPlaylist?id_playlist=${pm.variables.get('playlist-todelete')}`,\r",
+									"        header: {'x-auth-token': pm.variables.get('token-user')},\r",
+									"        method: 'get'\r",
+									"    }, function (err, response) {\r",
+									"        let arr = response.json();\r",
+									"        console.log(arr);\r",
+									"        arr = arr.lagu;\r",
+									"        console.log(arr);\r",
+									"        pm.test(\"Cek jumlah lagu\", function () {\r",
+									"            pm.expect(arr.length).to.be.below(parseInt(pm.variables.get('jumlah-lagu-sebelum-delete')));\r",
+									"        });\r",
+									"    });\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"description": "JSON Web Token yang didapat dari endpoint LOGIN",
+								"key": "x-auth-token",
+								"type": "text",
+								"value": "{{token-user}}"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "id_playlist",
+									"value": "{{playlist-todelete}}",
+									"type": "text"
+								},
+								{
+									"key": "id_lagu",
+									"value": "{{idlagu-todelete}}",
+									"type": "text"
+								}
+							],
+							"options": {
+								"urlencoded": {}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/playlist/deleteSong",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"playlist",
+								"deleteSong"
+							]
+						},
+						"description": "Endpoint yang digunakan untuk menghapus lagu dari dalam playlist\r\n\r\nParameter:\r\n+ header (x-auth-token): token autentikasi user\r\n+ id_playlist : wajib. ID playlist yang akan di delete lagunya\r\n+ id_lagu : wajib. id dari lagu yang ingin dihapus dari playlist\r\n\r\nResponse:\r\n+ message : Pesan berhasil/ tidaknya melakukan delete lagu dari playlist"
+					},
+					"response": [
+						{
+							"name": "Delete - sukses",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "x-auth-token",
+										"type": "text",
+										"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbF91c2VyIjoiZW1haWxAZW1haWwuY29tIiwiaWF0IjoxNTkwNDgxNzg5LCJleHAiOjE1OTA1NjgxODl9.1QwI5Dij1_2UkcGoubwihSn0m4JVtOKLxqbKtfVfqpM"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "id_playlist",
+											"value": "1",
+											"type": "text"
+										},
+										{
+											"key": "id_lagu",
+											"value": "24ySl2hOPGCDcxBxFIqWBu",
+											"type": "text"
+										}
+									],
+									"options": {
+										"urlencoded": {}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/api/playlist/deleteSong",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"playlist",
+										"deleteSong"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "Cowboy"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "68"
+								},
+								{
+									"key": "Etag",
+									"value": "W/\"44-oOoqWiGYXoqeYDFtrgzkVqFGyVE\""
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 26 May 2020 09:00:01 GMT"
+								},
+								{
+									"key": "Via",
+									"value": "1.1 vegur"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Lagu dengan id 24ySl2hOPGCDcxBxFIqWBu berhasil dihapus\"\n}"
+						}
+					]
+				},
+				{
+					"name": "GET Single Playlist",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "53381a85-1b12-4f7e-bda7-23de1c5b0e07",
+								"exec": [
+									"let iter = parseInt(pm.collectionVariables.get('iter-singleplaylist'));\r",
+									"if (!iter) iter = 1;\r",
+									"\r",
+									"if (iter === 1){\r",
+									"    pm.variables.set('token-user', pm.collectionVariables.get('user-regular-login-token'))\r",
+									"    pm.variables.set('playlist-toget', pm.variables.get('private-id'))\r",
+									"}\r",
+									"else if (iter === 2){\r",
+									"    pm.variables.set('token-user', '')\r",
+									"    pm.variables.set('playlist-toget', pm.variables.get('private-id'))\r",
+									"}\r",
+									"else {\r",
+									"    pm.variables.set('token-user', '')\r",
+									"    let id = parseInt(pm.variables.get('private-id'));\r",
+									"    if (id > 0) id = id - 1\r",
+									"    else id = id + 1\r",
+									"    pm.variables.set('playlist-toget', id)\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "e5b199a6-da68-4085-9c1f-c2d4adc48124",
+								"exec": [
+									"let iter = parseInt(pm.collectionVariables.get('iter-singleplaylist'));\r",
+									"if (!iter) iter = 1;\r",
+									"\r",
+									"if (iter === 1){\r",
+									"    pm.test(\"GET playlist private milik sendiri, expected status code is 200\", function () {\r",
+									"        pm.response.to.have.status(200);\r",
+									"    });\r",
+									"\r",
+									"    pm.collectionVariables.set('iter-singleplaylist', iter+1)\r",
+									"    postman.setNextRequest('GET Single Playlist');\r",
+									"}\r",
+									"else if (iter === 2){\r",
+									"    pm.test(\"GET private, tanpa login. Expected 400\", function () {\r",
+									"        pm.response.to.have.status(400);\r",
+									"    });\r",
+									"    pm.collectionVariables.set('iter-singleplaylist', iter+1)\r",
+									"    postman.setNextRequest('GET Single Playlist');\r",
+									"}\r",
+									"else {\r",
+									"    pm.test(\"GET public, tanpa login. Expected 200\", function () {\r",
+									"        pm.response.to.have.status(200);\r",
+									"    });\r",
+									"    pm.collectionVariables.set('iter-singleplaylist', iter+1)\r",
+									"    // postman.setNextRequest('GET Single Playlist');\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"description": "JSON Web Token yang didapat dari endpoint LOGIN",
+								"key": "x-auth-token",
+								"type": "text",
+								"value": "{{token-user}}"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/api/playlist/getPlaylist?id_playlist={{playlist-toget}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"playlist",
+								"getPlaylist"
+							],
+							"query": [
+								{
+									"key": "id_playlist",
+									"value": "{{playlist-toget}}"
+								}
+							]
+						},
+						"description": "Endpoint yang digunakan untuk mendapatkan sebuah playlist berdasar idnya\r\n\r\nParameter:\r\n+ header (x-auth-token): token autentikasi user. wajib untuk mengakses playlist private, opsional jika untuk mengakses playlist public\r\n+ id_playlist : wajib. ID playlist yang akan didapatkan lagunya\r\n\r\n\r\nResponse:\r\n+ message : Pesan berhasil/ tidaknya mendapatkan plasylist"
+					},
+					"response": [
+						{
+							"name": "Get Single Playlist - sukses",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "x-auth-token",
+										"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbF91c2VyIjoiZW1haWxAZW1haWwuY29tIiwiaWF0IjoxNTkwNDgxNzg5LCJleHAiOjE1OTA1NjgxODl9.1QwI5Dij1_2UkcGoubwihSn0m4JVtOKLxqbKtfVfqpM",
+										"description": "JSON Web Token yang didapat dari endpoint LOGIN",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/api/playlist/getPlaylist?id_playlist=1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"playlist",
+										"getPlaylist"
+									],
+									"query": [
+										{
+											"key": "id_playlist",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "827"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"33b-k16umLou3PXqA39vWxiRND4WBRg\""
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 30 May 2020 14:21:12 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Sukses\",\n    \"detail_playlist\": {\n        \"id\": 1,\n        \"email_user\": \"regular@email.com\",\n        \"nama_playlist\": \"dummy playlist 1\",\n        \"deskripsi_playlist\": null,\n        \"jenis_playlist\": 1,\n        \"jumlah_lagu\": 20\n    },\n    \"lagu\": [\n        {\n            \"id_track\": \"3CGZ7wfk4skmuyQgua1C1K\",\n            \"urutan_dalam_playlist\": 1\n        },\n        {\n            \"id_track\": \"41A89rj3GoMG6ktN37L7PG\",\n            \"urutan_dalam_playlist\": 2\n        },\n        {\n            \"id_track\": \"7yBbV2k2S2uhaQc24NF2xt\",\n            \"urutan_dalam_playlist\": 3\n        },\n        {\n            \"id_track\": \"7ju97lgwC2rKQ6wwsf9no9\",\n            \"urutan_dalam_playlist\": 4\n        },\n        {\n            \"id_track\": \"4L6ihclQPu1hqP9r3WNJjQ\",\n            \"urutan_dalam_playlist\": 5\n        },\n        {\n            \"id_track\": \"6hyQVqfHFvsJDjcmj4qrHf\",\n            \"urutan_dalam_playlist\": 6\n        },\n        {\n            \"id_track\": \"0oQc0F6KUE7QY7k5TU6bic\",\n            \"urutan_dalam_playlist\": 7\n        },\n        {\n            \"id_track\": \"6qI0MU175Dk2DeoUjlrOpy\",\n            \"urutan_dalam_playlist\": 8\n        },\n        {\n            \"id_track\": \"3CidPLqWXqgesJlwYVJZdy\",\n            \"urutan_dalam_playlist\": 9\n        },\n        {\n            \"id_track\": \"1IWNylpZ477gIVUDpJL66u\",\n            \"urutan_dalam_playlist\": 10\n        }\n    ]\n}"
+						}
+					]
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "a67a99e4-f8a3-453f-9d4b-25002185e85c",
+				"type": "text/javascript",
+				"exec": [
+					"let url = pm.environment.get('url');",
+					"if (!url){",
+					"    console.log('environment variable url not set, using default localhost:3000')",
+					"    url = 'localhost:3000'",
+					"}",
+					"pm.collectionVariables.set('url', url);"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "fb5750e9-4010-4353-8239-6e14345fa1d7",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "2960f8ff-98c7-4e96-beed-c926ef6066d6",
+			"key": "url",
+			"value": "localhost:3000",
+			"type": "string"
+		},
+		{
+			"id": "8c877f58-3145-4491-90aa-870935e91ed7",
+			"key": "register_current_iter",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"id": "b3cdf3c1-a3de-4c2e-8261-1181426f438d",
+			"key": "login_current_iter",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"id": "c28289bf-301c-4b1a-9596-2ac511a2b061",
+			"key": "getuserdetail-iter",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"id": "199fc502-0963-4087-8436-a7088eb0cb17",
+			"key": "update-iter",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"id": "b9d03fce-b96a-4897-a873-5b7d0912870a",
+			"key": "premium-iter",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"id": "67cf0d13-3139-4126-950b-cc98a40f7cd2",
+			"key": "email_regular",
+			"value": "regular@email.com",
+			"type": "string"
+		},
+		{
+			"id": "54986052-241f-4dde-896a-df24c461ddc3",
+			"key": "email_premium",
+			"value": "premium@email.com",
+			"type": "string"
+		},
+		{
+			"id": "b0b49e6e-9dd5-443c-873f-b8af9a96da96",
+			"key": "password_regular",
+			"value": "regularpassword",
+			"type": "string"
+		},
+		{
+			"id": "cbf43961-d9cb-4382-96a2-7c31524f5128",
+			"key": "password_premium",
+			"value": "premiumpassword",
+			"type": "string"
+		},
+		{
+			"id": "e58bd698-95d7-40e1-bc7c-c7f5f371e3c0",
+			"key": "nama_regular",
+			"value": "Regular User",
+			"type": "string"
+		},
+		{
+			"id": "4d906288-ee77-4645-80d0-bc213f604567",
+			"key": "nama_premium",
+			"value": "Premium User",
+			"type": "string"
+		},
+		{
+			"id": "cb3d7ace-1cd1-43db-b627-eadf073551cb",
+			"key": "after_update_regular",
+			"value": "User Biasa",
+			"type": "string"
+		},
+		{
+			"id": "61082422-e807-4db8-ab8c-04395fc770da",
+			"key": "after_update_premium",
+			"value": "User Berbayar",
+			"type": "string"
+		},
+		{
+			"id": "a8113872-feea-4f79-b1dc-4f5effd86134",
+			"key": "user-regular-login-token",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbF91c2VyIjoicmVndWxhckBlbWFpbC5jb20iLCJpYXQiOjE1OTA4MzA3MTIsImV4cCI6MTU5MDkxNzExMn0.G0uoI3q__YKtoqoBMXaCCCwpqK0x2a_JGlqiiQC_Xzk",
+			"type": "string"
+		},
+		{
+			"id": "af4795f9-c5bd-411f-a6db-52db2949c1c1",
+			"key": "user-premium-login-token",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbF91c2VyIjoicHJlbWl1bUBlbWFpbC5jb20iLCJpYXQiOjE1OTA4MzA1MTEsImV4cCI6MTU5MDkxNjkxMX0._BEsbLgsQLRN6MROjXJ60SZsKUXCiLfmmZHUWKetLwE",
+			"type": "string"
+		},
+		{
+			"id": "4f1ef983-6f0b-49f7-84c7-fa05854ce4ca",
+			"key": "iter-create",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"id": "6878ceba-9620-4334-a13a-3cd93df6124e",
+			"key": "iter-getplaylist",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"protocolProfileBehavior": {}
+}
