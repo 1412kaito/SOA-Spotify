@@ -66,8 +66,8 @@ App.listen(port, async ()=>{
         else console.error(error);        
     }
     
-    // database.sync({force: true});
-    // console.log('Reset database');
+    database.sync({force: true});
+    console.log('Reset database');
     
     console.log(`Listening on port ${port}`);
      //let t = await User.sync({alter: true});
