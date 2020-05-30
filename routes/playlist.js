@@ -223,10 +223,29 @@ router.delete('/deleteSong',async(req,res)=>{
             })
             if(dataplaylist==null)res.status(400).send({message:"Playlist Tidak Ditemukan"});
             else{
+                let urutan = await Detail.findOne({
+                    where:{id_track:id_lagu},
+                    attributes:['urutan_dalam_playlist']
+                })
+                if(urutan==null)res.status(400).send({message:"Lagu Tidak Ditemukan"});
+                else{
                 await Detail.destroy({where:{"id_track":id_lagu}});
                 dataplaylist.jumlah_lagu--;
                 await dataplaylist.save();
+                let list = await Detail.findAll({
+                    where: {
+                      urutan_dalam_playlist:{
+                        [operator.gt]: urutan.urutan_dalam_playlist
+                      }
+                    }
+                  });
+                for(let i=0;i<list.length;i++){
+                    list[i].urutan_dalam_playlist--;
+                    await list[i].save();
+                }
+               
                 res.status(200).send({message:"Lagu dengan id "+id_lagu+" berhasil dihapus"});
+            }
             }
         }
     }catch(err){
