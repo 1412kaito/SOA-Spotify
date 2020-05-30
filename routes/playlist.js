@@ -275,7 +275,7 @@ router.get("/getPlaylist",async(req,res)=>{
                         where:{"id_playlist":id_playlist},order:['urutan_dalam_playlist'],
                         attributes:['id_track','urutan_dalam_playlist']
                     });
-                    res.status(200).send({message:{dataplaylist,detail_lagu}});
+                    res.status(200).send({message:"Sukses",detail_playlist:dataplaylist,lagu:detail_lagu});
                 }else{
                     let user = jwt.verify(token, process.env.SECRET_KEY);
                     if(user.email_user==dataplaylist.email_user){
@@ -283,7 +283,7 @@ router.get("/getPlaylist",async(req,res)=>{
                             where:{"id_playlist":id_playlist},order:['urutan_dalam_playlist'],
                             attributes:['id_track','urutan_dalam_playlist']
                         });
-                        res.status(200).send({message:{dataplaylist,detail_lagu}});
+                        res.status(200).send({message:"Sukses",detail_playlist:dataplaylist,lagu:detail_lagu});
                     } else res.status(403).send({message:"Playlist ini bersifat private"});
                 }
                 
