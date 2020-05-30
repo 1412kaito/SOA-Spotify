@@ -1,0 +1,645 @@
+{
+	"id": "ed677705-02c4-43f2-8b61-a102fd7d4eef",
+	"name": "SOA-Spotify",
+	"timestamp": "2020-05-30T14:47:25.205Z",
+	"collection_id": "8331ad2d-8c62-41b5-89e4-3b1ea926f24c",
+	"folder_id": 0,
+	"environment_id": "480c9152-dd58-4d26-ba2b-801ae8c9daf3",
+	"totalPass": 40,
+	"totalFail": 0,
+	"results": [
+		{
+			"id": "1e4d61af-52ef-486d-bcf9-0ee618a9fdf1",
+			"name": "REGISTER",
+			"time": 7,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"Status code is 400, user kembar": true,
+				"Cek pesan": true
+			},
+			"testPassFailCounts": {
+				"Registrasi user #1. Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Cek pesan": {
+					"pass": 3,
+					"fail": 0
+				},
+				"Registrasi user #2. Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Status code is 400, user kembar": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				143,
+				101,
+				7
+			],
+			"allTests": [
+				{
+					"Registrasi user #1. Status code is 200": true,
+					"Cek pesan": true
+				},
+				{
+					"Registrasi user #2. Status code is 200": true,
+					"Cek pesan": true
+				},
+				{
+					"Status code is 400, user kembar": true,
+					"Cek pesan": true
+				}
+			]
+		},
+		{
+			"id": "dea58b86-5d4f-40ea-b8b1-d7bf3a530a8a",
+			"name": "LOGIN",
+			"time": 12,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Login user Premium. Status code is 200": true
+			},
+			"testPassFailCounts": {
+				"Login user reguler. Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Login user Premium. Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				9,
+				12
+			],
+			"allTests": [
+				{
+					"Login user reguler. Status code is 200": true
+				},
+				{
+					"Login user Premium. Status code is 200": true
+				}
+			]
+		},
+		{
+			"id": "9153ae83-7973-48a0-9f4c-17cc426b824b",
+			"name": "PREMIUM",
+			"time": 60,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Cek pesan dan data user": true,
+				"Status code is 200 2": true
+			},
+			"testPassFailCounts": {
+				"Cek pesan dan data user": {
+					"pass": 2,
+					"fail": 0
+				},
+				"Status code is 200 1": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Status code is 200 2": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				72,
+				60
+			],
+			"allTests": [
+				{
+					"Cek pesan dan data user": true,
+					"Status code is 200 1": true
+				},
+				{
+					"Cek pesan dan data user": true,
+					"Status code is 200 2": true
+				}
+			]
+		},
+		{
+			"id": "7ff21e93-25e4-4cdd-854f-5790eec4bfdf",
+			"name": "GET",
+			"time": 10,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"GET user premium": true
+			},
+			"testPassFailCounts": {
+				"GET user regular": {
+					"pass": 1,
+					"fail": 0
+				},
+				"GET user premium": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				19,
+				10
+			],
+			"allTests": [
+				{
+					"GET user regular": true
+				},
+				{
+					"GET user premium": true
+				}
+			]
+		},
+		{
+			"id": "249a7845-2330-4a1f-aa21-459e8a781269",
+			"name": "UPDATE",
+			"url": "http://localhost:3000/api/user",
+			"time": 98,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Update detail user regular": true,
+				"Cek detail setelah diupdate": true
+			},
+			"testPassFailCounts": {
+				"Update detail user regular": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Cek detail setelah diupdate": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				98
+			],
+			"allTests": [
+				{
+					"Update detail user regular": true,
+					"Cek detail setelah diupdate": true
+				}
+			]
+		},
+		{
+			"id": "b312cbe9-1d34-4781-9941-df97f88e7e5e",
+			"name": "GET multiple song",
+			"url": "http://localhost:3000/api/songs?page=1&market=ID",
+			"time": 730,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Kembalian berupa array": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Kembalian berupa array": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				730
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Kembalian berupa array": true
+				}
+			]
+		},
+		{
+			"id": "8ffa48eb-74fa-4abc-83fe-9112dbea0f0e",
+			"name": "GET single song",
+			"url": "http://localhost:3000/api/songs/3CGZ7wfk4skmuyQgua1C1K",
+			"time": 322,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Song ID antara request dan response sama": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Song ID antara request dan response sama": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				322
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Song ID antara request dan response sama": true
+				}
+			]
+		},
+		{
+			"id": "fd8d06d1-8bf8-4515-8b7b-3d9fe4d196e8",
+			"name": "SEARCH by title",
+			"url": "http://localhost:3000/api/songs/query?keyword=rumah",
+			"time": 425,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Check title": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Check title": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				425
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Check title": true
+				}
+			]
+		},
+		{
+			"id": "31e48ffd-3045-49bc-bf3b-4b69eef27f3c",
+			"name": "CREATE",
+			"time": 92,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Buat playlist user premium, tidak ada over quota": true
+			},
+			"testPassFailCounts": {
+				"Buat playlist user biasa": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Buat playlist user biasa, over quota": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Buat playlist user premium, tidak ada over quota": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				59,
+				60,
+				92
+			],
+			"allTests": [
+				{
+					"Buat playlist user biasa": true
+				},
+				{
+					"Buat playlist user biasa, over quota": true
+				},
+				{
+					"Buat playlist user premium, tidak ada over quota": true
+				}
+			]
+		},
+		{
+			"id": "a33208e9-5aec-47f5-8f34-cdc8004c391d",
+			"name": "UPDATE Playlist",
+			"time": 13,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"Update playlist milik orang lain, status code is 400": true
+			},
+			"testPassFailCounts": {
+				"User biasa, update playlist sendiri ubah jadi private, status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Cek pesan": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Update playlist milik orang lain, status code is 400": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				38,
+				13
+			],
+			"allTests": [
+				{
+					"User biasa, update playlist sendiri ubah jadi private, status code is 200": true,
+					"Cek pesan": true
+				},
+				{
+					"Update playlist milik orang lain, status code is 400": true
+				}
+			]
+		},
+		{
+			"id": "6a22f047-a172-40aa-95cf-001e0c1f9436",
+			"name": "GET multiple playlist",
+			"url": "http://localhost:3000/api/playlist?page=1",
+			"time": 15,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Request dengan header auth, Status code is 200": true,
+				"terdapat playlist yang sifatnya private": true,
+				"terdapat playlist yang sifatnya public": true
+			},
+			"testPassFailCounts": {
+				"Request dengan header auth, Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"terdapat playlist yang sifatnya private": {
+					"pass": 1,
+					"fail": 0
+				},
+				"terdapat playlist yang sifatnya public": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				15
+			],
+			"allTests": [
+				{
+					"Request dengan header auth, Status code is 200": true,
+					"terdapat playlist yang sifatnya private": true,
+					"terdapat playlist yang sifatnya public": true
+				}
+			]
+		},
+		{
+			"id": "85bbe176-a3db-4f4e-a4ef-35d231a1f897",
+			"name": "ISI PLAYLIST",
+			"url": "http://localhost:3000/api/playlist/add",
+			"time": 748,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Tambah lagu pada playlist sendiri, Status code is 200": true,
+				"Cek pesan": true,
+				"Cek keberadaan lagu": true
+			},
+			"testPassFailCounts": {
+				"Tambah lagu pada playlist sendiri, Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Cek pesan": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Cek keberadaan lagu": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				748
+			],
+			"allTests": [
+				{
+					"Tambah lagu pada playlist sendiri, Status code is 200": true,
+					"Cek pesan": true,
+					"Cek keberadaan lagu": true
+				}
+			]
+		},
+		{
+			"id": "dc2a202a-2f95-4e2d-bfc4-b3814a8def18",
+			"name": "DELETE",
+			"url": "http://localhost:3000/api/playlist/deleteSong",
+			"time": 571,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Delete satu lagu, status code is 200": true,
+				"Cek Pesan": true,
+				"Cek jumlah lagu": true
+			},
+			"testPassFailCounts": {
+				"Delete satu lagu, status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Cek Pesan": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Cek jumlah lagu": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				571
+			],
+			"allTests": [
+				{
+					"Delete satu lagu, status code is 200": true,
+					"Cek Pesan": true,
+					"Cek jumlah lagu": true
+				}
+			]
+		},
+		{
+			"id": "2e681f9e-595d-4f55-a0d4-e65843451306",
+			"name": "GET Single Playlist",
+			"time": 9,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"GET public, tanpa login. Expected 200": true
+			},
+			"testPassFailCounts": {
+				"GET playlist private milik sendiri, expected status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"GET private, tanpa login. Expected 400": {
+					"pass": 1,
+					"fail": 0
+				},
+				"GET public, tanpa login. Expected 200": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				9,
+				20,
+				9
+			],
+			"allTests": [
+				{
+					"GET playlist private milik sendiri, expected status code is 200": true
+				},
+				{
+					"GET private, tanpa login. Expected 400": true
+				},
+				{
+					"GET public, tanpa login. Expected 200": true
+				}
+			]
+		}
+	],
+	"count": 1,
+	"totalTime": 3642,
+	"collection": {
+		"requests": [
+			{
+				"id": "1e4d61af-52ef-486d-bcf9-0ee618a9fdf1",
+				"method": "POST"
+			},
+			{
+				"id": "1e4d61af-52ef-486d-bcf9-0ee618a9fdf1",
+				"method": "POST"
+			},
+			{
+				"id": "1e4d61af-52ef-486d-bcf9-0ee618a9fdf1",
+				"method": "POST"
+			},
+			{
+				"id": "dea58b86-5d4f-40ea-b8b1-d7bf3a530a8a",
+				"method": "POST"
+			},
+			{
+				"id": "dea58b86-5d4f-40ea-b8b1-d7bf3a530a8a",
+				"method": "POST"
+			},
+			{
+				"id": "9153ae83-7973-48a0-9f4c-17cc426b824b",
+				"method": "POST"
+			},
+			{
+				"id": "9153ae83-7973-48a0-9f4c-17cc426b824b",
+				"method": "POST"
+			},
+			{
+				"id": "7ff21e93-25e4-4cdd-854f-5790eec4bfdf",
+				"method": "GET"
+			},
+			{
+				"id": "7ff21e93-25e4-4cdd-854f-5790eec4bfdf",
+				"method": "GET"
+			},
+			{
+				"id": "249a7845-2330-4a1f-aa21-459e8a781269",
+				"method": "PUT"
+			},
+			{
+				"id": "b312cbe9-1d34-4781-9941-df97f88e7e5e",
+				"method": "GET"
+			},
+			{
+				"id": "8ffa48eb-74fa-4abc-83fe-9112dbea0f0e",
+				"method": "GET"
+			},
+			{
+				"id": "fd8d06d1-8bf8-4515-8b7b-3d9fe4d196e8",
+				"method": "GET"
+			},
+			{
+				"id": "31e48ffd-3045-49bc-bf3b-4b69eef27f3c",
+				"method": "POST"
+			},
+			{
+				"id": "31e48ffd-3045-49bc-bf3b-4b69eef27f3c",
+				"method": "POST"
+			},
+			{
+				"id": "31e48ffd-3045-49bc-bf3b-4b69eef27f3c",
+				"method": "POST"
+			},
+			{
+				"id": "a33208e9-5aec-47f5-8f34-cdc8004c391d",
+				"method": "PUT"
+			},
+			{
+				"id": "a33208e9-5aec-47f5-8f34-cdc8004c391d",
+				"method": "PUT"
+			},
+			{
+				"id": "6a22f047-a172-40aa-95cf-001e0c1f9436",
+				"method": "GET"
+			},
+			{
+				"id": "85bbe176-a3db-4f4e-a4ef-35d231a1f897",
+				"method": "POST"
+			},
+			{
+				"id": "dc2a202a-2f95-4e2d-bfc4-b3814a8def18",
+				"method": "DELETE"
+			},
+			{
+				"id": "2e681f9e-595d-4f55-a0d4-e65843451306",
+				"method": "GET"
+			},
+			{
+				"id": "2e681f9e-595d-4f55-a0d4-e65843451306",
+				"method": "GET"
+			},
+			{
+				"id": "2e681f9e-595d-4f55-a0d4-e65843451306",
+				"method": "GET"
+			}
+		]
+	}
+}
