@@ -62,11 +62,12 @@ App.listen(port, async ()=>{
         fs.mkdirSync(path.join(__dirname, 'uploads'));
         console.log("Created upload dir");
     } catch (error) {
-        console.error(error);        
+        if (error.code === 'EEXIST') {}
+        else console.error(error);        
     }
     
-    // database.sync({force: true});
-    // console.log('Reset database');
+    database.sync({force: true});
+    console.log('Reset database');
     
     console.log(`Listening on port ${port}`);
      //let t = await User.sync({alter: true});

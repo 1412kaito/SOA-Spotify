@@ -59,7 +59,6 @@ router.get("/debug", async (req, res)=>{
         res.json(resUser);
     }
     else {
-
         res.status(404).json({});
     }
     // res.send("ini user");
@@ -279,9 +278,12 @@ router.put("/", upload.single('img'), async(req, res)=>{
             return
         }
         await UserData.save();
+
+        let msg = "Berhasil update user";
+        if (req.file) msg += ' dan upload profile picture';
         res.status(200).json({
             status: 200,
-            message: "Berhasil update user",
+            message: msg,
             user: await User.findOne({
                 where: {email_user : user.email_user},
                 attributes: ['email_user', 'nama_user', 'exp_premium']
