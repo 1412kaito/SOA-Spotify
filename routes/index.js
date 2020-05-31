@@ -12,8 +12,8 @@ const request = require('request');
 const getSpotifyToken = require('../helpers').getSpotifyToken
 
 router.get('/', async(req, res)=>{
-    res.send(await getSpotifyToken())
-    // res.send("Sukses masuk api!");
+    //res.send(await getSpotifyToken())
+    res.send("Sukses masuk api!");
 })
 
 module.exports = router;
